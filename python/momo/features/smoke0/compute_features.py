@@ -6,7 +6,7 @@ import momo
 from momo.features import *
 
 class compute_features( momo.opencl.Program ):
-  def __init__( self, convert, _ ):
+  def __init__( self, convert ):
     momo.opencl.Program.__init__( self )
     self.kernel = self.loadProgram( momo.BASE_DIR + "/opencl/smoke0.cl" )
 
