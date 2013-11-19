@@ -1,3 +1,4 @@
+import os
 BASE_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", ".." ) )
 #from misc import *
 #from tick_tack import *

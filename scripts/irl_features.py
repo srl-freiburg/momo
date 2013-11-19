@@ -50,15 +50,18 @@ def callback( data ):
   # Compute features and costs
   other = []
   robot  = None
-  for a in data.data.agent_states:
+  for a in data.agent_states:
     v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
-    if a.id == target_id:
+    if a.id == parms.target_id:
       robot = v
     else:
       other.append( v )
   other = np.array( other )
 
+  rospy.loginfo( "Grid: %i, %i" % ( convert.grid_width, convert.grid_height ) )
   f = compute_features( np.linalg.norm( robot[2:] ), other )
+  rospy.loginfo(f.shape)
+
   costs = compute_costs( f, parms.weights )
 
   # Plan
