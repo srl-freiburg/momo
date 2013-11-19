@@ -41,7 +41,7 @@ def callback( data ):
   parms = get_params()
 
   # Build planning objects
-  convert = momo.convert( { "x1": parms.x1, "y1": parms.y1, "x2": parms.x2, "y2": parms.y2 }, cell_size )
+  convert = momo.convert( { "x1": parms.x1, "y1": parms.y1, "x2": parms.x2, "y2": parms.y2 }, parms.cell_size )
   features = momo.features.__dict__[parms.feature_type]
   compute_features = features.compute_features( convert, **parms.feature_params )
   compute_costs = momo.features.compute_costs( convert )
