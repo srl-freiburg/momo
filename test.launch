@@ -5,8 +5,8 @@
   <param name="/irl_features/cell_size" value="1" type="int"/>
   <param name="/irl_features/x1" value="0.0" type="double"/>
   <param name="/irl_features/y1" value="0.0" type="double"/>
-  <param name="/irl_features/x2" value="0.0" type="double"/>
-  <param name="/irl_features/y2" value="0.0" type="double"/>
+  <param name="/irl_features/x2" value="41.0" type="double"/>
+  <param name="/irl_features/y2" value="41.0" type="double"/>
   <param name="/irl_features/weights" value="[0.2, 0.2, 0.2, 0.2, 0.2]"/>
   <param name="/irl_features/goal" value="[0.0, 0.0, 1.0, 0.0]"/>
   <node name="irl_features" pkg="momo" type="irl_features.py"/>

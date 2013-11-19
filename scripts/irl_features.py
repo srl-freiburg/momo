@@ -31,7 +31,7 @@ def get_params():
   result.cell_size = param( "cell_size", 1 )
   result.x1   = param( "x1", 0.0 )
   result.x2   = param( "x2", 0.0 )
-  result.y1   = param( "y2", 41.0 )
+  result.y1   = param( "y1", 41.0 )
   result.y2   = param( "y2", 41.0 )
   rospy.loginfo( result.goal )
   return result
@@ -58,10 +58,7 @@ def callback( data ):
       other.append( v )
   other = np.array( other )
 
-  rospy.loginfo( "Grid: %i, %i" % ( convert.grid_width, convert.grid_height ) )
   f = compute_features( np.linalg.norm( robot[2:] ), other )
-  rospy.loginfo(f.shape)
-
   costs = compute_costs( f, parms.weights )
 
   # Plan
@@ -70,8 +67,8 @@ def callback( data ):
   goal = convert.from_world2( parms.goal )
 
 
-  cummulated, parents = self.planner( costs, goal )
-  path = self.planner.get_path( parents, current )
+  cummulated, parents = planner( costs, goal )
+  path = planner.get_path( parents, current )
 
   rospy.loginfo( path )
 
