@@ -58,7 +58,8 @@ def callback( data ):
       other.append( v )
   other = np.array( other )
 
-  f = compute_features( np.linalg.norm( robot[2:] ), other )
+  speed = np.linalg.norm( robot[2:] )
+  f = compute_features( speed, other )
   costs = compute_costs( f, parms.weights )
 
   # Plan
@@ -67,10 +68,18 @@ def callback( data ):
   goal = convert.from_world2( parms.goal )
 
 
+  rospy.loginfo( "Origin: %f, %f; Goal: %f %f" % ( current[0], current[1], goal[0], goal[1] ) )
+
+
   cummulated, parents = planner( costs, goal )
   path = planner.get_path( parents, current )
 
-  rospy.loginfo( path )
+  result = []
+  for p in path:
+    result.append( self.convert.to_world2( p, speed )
+
+
+  rospy.loginfo( result )
 
 
   #rospy.loginfo( data.data )
