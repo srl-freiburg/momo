@@ -79,7 +79,7 @@ def callback( data ):
 def listener():
   rospy.init_node( 'irl_features' )
   p = get_params()
-  rospy.Subscriber( "agents", AllAgentsState, callback )
+  rospy.Subscriber( "AllAgentsStatus", AllAgentsState, callback )
   rospy.spin()
 
 
