@@ -34,7 +34,6 @@ def get_params():
   result.x2   = param( "x2", 0.0 )
   result.y1   = param( "y1", 41.0 )
   result.y2   = param( "y2", 41.0 )
-  rospy.loginfo( result.goal )
   return result
 
 
@@ -81,13 +80,6 @@ def callback( data ):
 
   rospy.loginfo( "0: %f, %f; -1: %f, %f" % ( path[0][0], path[0][1], path[-1][0], path[-1][1] ) )
 
-
-
-
-  rospy.loginfo( result )
-
-
-  #rospy.loginfo( data.data )
 
 
 def listener():
