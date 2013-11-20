@@ -77,7 +77,7 @@ def callback( data ):
 
   result = []
   for p in path:
-    result.append( self.convert.to_world2( p, speed )
+    result.append( convert.to_world2( p, speed ) )
 
   rospy.loginfo( "0: %f, %f; -1: %f, %f" % ( path[0][0], path[0][1], path[-1][0], path[-1][1] ) )
 
