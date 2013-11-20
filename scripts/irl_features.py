@@ -80,8 +80,8 @@ def callback( data ):
   a.id = parms.target_id
   a.position.x = result[1][0]
   a.position.y = result[1][1]
-  a.velocity.x = result[1][2] - current[0]
-  a.velocity.y = result[1][3] - current[1]
+  a.velocity.x = result[1][0] - current[0]
+  a.velocity.y = result[1][1] - current[1]
 
   rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   rospy.wait_for_service( "SetAgentStatus" )
