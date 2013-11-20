@@ -80,15 +80,16 @@ def callback( data ):
   a.id = parms.target_id
   a.position.x = result[-1][0]
   a.position.y = result[-1][1]
-  a.velocity.x = result[-1][2]
-  a.velocity.y = result[-1][3]
+  a.velocity.x = result[-1][2] - current[0]
+  a.velocity.y = result[-1][3] - current[1]
 
   rospy.wait_for_service( "SetAgentStatus" )
   try:
     set_agent_status = rospy.ServiceProxy( "SetAgentStatus", SetAgentStatus )
     result = set_agent_status( a )
+    rospy.loginfo( "Command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   except rospy.ServiceException, e:
-    print "Service call failed: %s" % e
+    rospy.logerror( "Service call failed: %s" % e )
 
 
 
