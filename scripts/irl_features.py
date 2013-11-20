@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import numpy as np
+from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
 from pedsim_srvs.srv import SetAgentState
 import ast
@@ -68,10 +69,6 @@ def callback( data ):
   current = convert.from_world2( robot )
   goal = convert.from_world2( parms.goal )
 
-
-  rospy.loginfo( "Origin: %f, %f; Goal: %f %f" % ( current[0], current[1], goal[0], goal[1] ) )
-
-
   cummulated, parents = planner( costs, goal )
   path = planner.get_path( parents, current )
 
@@ -79,7 +76,19 @@ def callback( data ):
   for p in path:
     result.append( convert.to_world2( p, speed ) )
 
-  rospy.loginfo( "0: %f, %f; -1: %f, %f" % ( path[0][0], path[0][1], path[-1][0], path[-1][1] ) )
+  a = AgentState()
+  a.id = parms.target_id
+  a.position.x = result[-1][0]
+  a.position.y = result[-1][1]
+  a.velocity.x = result[-1][2]
+  a.velocity.y = result[-1][3]
+
+  rospy.wait_for_service( "SetAgentStatus" )
+  try:
+    set_agent_status = rospy.ServiceProxy( "SetAgentStatus", SetAgentStatus )
+    result = set_agent_status( a )
+  except rospy.ServiceException, e:
+    print "Service call failed: %s" % e
 
 
 
