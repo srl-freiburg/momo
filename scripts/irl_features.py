@@ -15,6 +15,8 @@ sys.path.append( path )
 
 import momo
 
+last_stamp = None
+
 class Params( object ): pass
 
 def param( name, default = None ):
@@ -39,8 +41,10 @@ def get_params():
 
 
 def callback( data ):
-  rospy.loginfo( "Here" )
-  data.timestamp
+  global last_stamp
+
+  if last_stamp is not None and rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > 0.05: 
+    return
   parms = get_params()
 
   # Build planning objects
@@ -53,6 +57,8 @@ def callback( data ):
   # Compute features and costs
   other = []
   robot  = None
+
+  last_stamp = data.header.stamp
   for a in data.agent_states:
     v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
     if a.id == parms.target_id:
@@ -82,15 +88,15 @@ def callback( data ):
 
   a = AgentState()
   a.id = parms.target_id
-  # a.position.x = result[1][0]
-  # a.position.y = result[1][1]
-  # a.velocity.x = result[1][0] - current[0]
-  # a.velocity.y = result[1][1] - current[1]
+  a.position.x = result[1][0]
+  a.position.y = result[1][1]
+  a.velocity.x = result[1][0] - robot[0]
+  a.velocity.y = result[1][1] - robot[1]
 
-  a.position.x = result[2][0]
-  a.position.y = result[2][1]
-  a.velocity.x = result[2][0] - robot[0]
-  a.velocity.y = result[2][1] - robot[1]
+  # a.position.x = result[2][0]
+  # a.position.y = result[2][1]
+  # a.velocity.x = result[2][0] - robot[0]
+  # a.velocity.y = result[2][1] - robot[1]
 
   rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   rospy.wait_for_service( "SetAgentState" )

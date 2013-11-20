@@ -1,7 +1,7 @@
 <launch>
   <param name="/irl_features/target_id" value="1" type="int"/>
-  <param name="/irl_features/feature_type" value="smoke0"/>
-  <param name="/irl_features/feature_params" value="{}"/>
+  <param name="/irl_features/feature_type" value="helbing"/>
+  <param name="/irl_features/feature_params" value="{'radius': 1.0}"/>
   <param name="/irl_features/cell_size" value="1.0" type="double"/>
   <param name="/irl_features/x1" value="0.0" type="double"/>
   <param name="/irl_features/y1" value="0.0" type="double"/>
