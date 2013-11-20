@@ -85,6 +85,7 @@ def callback( data ):
 
   rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   rospy.wait_for_service( "SetAgentState" )
+  rospy.loginfo("Wait is over!")
   try:
     set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
     result = set_agent_status( a )
