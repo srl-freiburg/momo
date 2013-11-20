@@ -38,6 +38,7 @@ def get_params():
 
 
 def callback( data ):
+  rospy.loginfo( "Here" )
   parms = get_params()
 
   # Build planning objects
