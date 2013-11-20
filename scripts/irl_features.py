@@ -83,13 +83,14 @@ def callback( data ):
   a.velocity.x = result[-1][2] - current[0]
   a.velocity.y = result[-1][3] - current[1]
 
+  rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   rospy.wait_for_service( "SetAgentStatus" )
   try:
     set_agent_status = rospy.ServiceProxy( "SetAgentStatus", SetAgentStatus )
     result = set_agent_status( a )
-    rospy.loginfo( "Command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   except rospy.ServiceException, e:
     rospy.logerror( "Service call failed: %s" % e )
+  rospy.loginfo( "Command sent" )
 
 
 
