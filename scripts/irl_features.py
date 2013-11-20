@@ -40,6 +40,7 @@ def get_params():
 
 def callback( data ):
   rospy.loginfo( "Here" )
+  data.timestamp
   parms = get_params()
 
   # Build planning objects
@@ -72,20 +73,27 @@ def callback( data ):
   cummulated, parents = planner( costs, goal )
   path = planner.get_path( parents, current )
 
+  # rospy.loginfo( "Current: %f, %f, %f" % (current[0], current[1], current[2]) )
+  rospy.loginfo( "Current: %f, %f, %f, %f" % (robot[0], robot[1], robot[2], robot[3]) )
+
   result = []
   for p in path:
     result.append( convert.to_world2( p, speed ) )
 
   a = AgentState()
   a.id = parms.target_id
-  a.position.x = result[1][0]
-  a.position.y = result[1][1]
-  a.velocity.x = result[1][0] - current[0]
-  a.velocity.y = result[1][1] - current[1]
+  # a.position.x = result[1][0]
+  # a.position.y = result[1][1]
+  # a.velocity.x = result[1][0] - current[0]
+  # a.velocity.y = result[1][1] - current[1]
+
+  a.position.x = result[2][0]
+  a.position.y = result[2][1]
+  a.velocity.x = result[2][0] - robot[0]
+  a.velocity.y = result[2][1] - robot[1]
 
   rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
   rospy.wait_for_service( "SetAgentState" )
-  rospy.loginfo("Wait is over!")
   try:
     set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
     result = set_agent_status( a )
