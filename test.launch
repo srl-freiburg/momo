@@ -9,5 +9,6 @@
   <param name="/irl_features/y2" value="41.0" type="double"/>
   <param name="/irl_features/weights" value="[0.2, 0.2, 0.2, 0.2, 0.2]"/>
   <param name="/irl_features/goal" value="[5.0, 35.0, -1.0, 0.0]"/>
+  <param name="/irl_features/speed" value="0.05" type="double"/>
   <node name="irl_features" pkg="momo" type="irl_features.py"/>
 </launch>

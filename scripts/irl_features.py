@@ -25,44 +25,28 @@ def param( name, default = None ):
 
 def get_params():
   result = Params()
-  result.target_id = param( "target_id", 1 )
-  result.feature_type = param( "feature_type", "smoke0" )
+  result.target_id = param( "target_id" )
+  result.feature_type = param( "feature_type" )
   result.feature_params = ast.literal_eval( param( "feature_params" ) )
   result.weights = np.array( ast.literal_eval( param( "weights" ) ), dtype = np.float64 )
   result.goal = np.array( ast.literal_eval( param( "goal" ) ), dtype = np.float64 )
-  result.cell_size = param( "cell_size", 1 )
-  result.x1   = param( "x1", 0.0 )
-  result.x2   = param( "x2", 0.0 )
-  result.y1   = param( "y1", 41.0 )
-  result.y2   = param( "y2", 41.0 )
+  result.speed = param( "speed" )
+  result.cell_size = param( "cell_size" )
+  result.x1   = param( "x1" )
+  result.x2   = param( "x2" )
+  result.y1   = param( "y1" )
+  result.y2   = param( "y2" )
   return result
 
-
-def callback( data ):
-  if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > 0.05: 
-    return
-  parms = get_params()
-
+def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
   # Build planning objects
-  convert = momo.convert( { "x1": parms.x1, "y1": parms.y1, "x2": parms.x2, "y2": parms.y2 }, parms.cell_size )
-  features = momo.features.__dict__[parms.feature_type]
-  compute_features = features.compute_features( convert, **parms.feature_params )
+  convert = momo.convert( { "x1": x1, "y1": y1, "x2": x2, "y2": y2 }, cell_size )
+  features = momo.features.__dict__[feature_type]
+  compute_features = features.compute_features( convert, **feature_params )
   compute_costs = momo.features.compute_costs( convert )
   planner = momo.planning.dijkstra()
 
   # Compute features and costs
-  other = []
-  robot  = None
-
-  for a in data.agent_states:
-    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
-    if a.id == parms.target_id:
-      robot = v
-    else:
-      other.append( v )
-  other = np.array( other )
-
-  speed = np.linalg.norm( robot[2:] )
   f = compute_features( speed, other )
   costs = compute_costs( f, parms.weights )
 
@@ -74,33 +58,70 @@ def callback( data ):
   cummulated, parents = planner( costs, goal )
   path = planner.get_path( parents, current )
 
-  # rospy.loginfo( "Current: %f, %f, %f" % (current[0], current[1], current[2]) )
-  rospy.loginfo( "Current: %f, %f, %f, %f" % (robot[0], robot[1], robot[2], robot[3]) )
-
-  result = []
+  world_path = []
   for p in path:
-    result.append( convert.to_world2( p, speed ) )
+    world_path.append( convert.to_world2( p, speed ) )
 
-  a = AgentState()
-  a.id = parms.target_id
-  a.position.x = result[1][0]
-  a.position.y = result[1][1]
-  a.velocity.x = result[1][0] - robot[0]
-  a.velocity.y = result[1][1] - robot[1]
+  interpolated_path = []
+  i = 0
+  current = robot
 
-  # a.position.x = result[2][0]
-  # a.position.y = result[2][1]
-  # a.velocity.x = result[2][0] - robot[0]
-  # a.velocity.y = result[2][1] - robot[1]
+  while True:
+    current_cell = convert.from_world2( current )
+    next_cell = convert_from_world2( world_path[i] )
+    if current_cell == next_cell:
+      j += 1
+    if not j < len( interpolated_path ):
+      break
+    current[2:] = world_path[i][:2] - current[:2] 
+    current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
+    current[:2] += current[2:]
+    interpolated_path.append( current * 1.0 )
+  return interpolated_path
 
-  rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( a.position.x, a.position.y, a.velocity.x, a.velocity.y ) )
-  rospy.wait_for_service( "SetAgentState" )
-  try:
-    set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
-    result = set_agent_status( a )
-  except rospy.ServiceException, e:
-    rospy.logerr( "Service call failed: %s" % e )
-  rospy.loginfo( "Command sent" )
+
+def set_agent_state( agent_id, x, y, vx, vy ):
+    a = AgentState()
+    a.id = parms.target_id
+    a.position.x = x
+    a.position.y = y
+    a.velocity.x = vx
+    a.velocity.y = vy
+
+    rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( x, y, vx, vy ) )
+    rospy.wait_for_service( "SetAgentState" )
+    try:
+      set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
+      result = set_agent_status( a )
+    except rospy.ServiceException, e:
+      rospy.logerr( "Service call failed: %s" % e )
+    rospy.loginfo( "Command sent" )
+
+def callback( data ):
+  if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > 0.05: 
+    return
+  parms = get_params()
+
+  other = []
+  robot  = None
+
+  for a in data.agent_states:
+    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
+    if a.id == parms.target_id:
+      robot = v
+    else:
+      other.append( v )
+  other = np.array( other )
+
+  path = plan( 
+    parms.feature_type, parms.feature_params, 
+    parms.x1, parms.y1, parms.x2, parms.y2, parms.cell_size, 
+    robot, other, goal, parms.speed 
+  )
+
+
+  if len( path ) > 1:
+    set_agent_state( parms.target_id, path[1][0], path[1][1], result[1][0] - robot[0], result[1][1] - robot[1] )
 
 
 
