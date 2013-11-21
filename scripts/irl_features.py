@@ -65,14 +65,14 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
 
   interpolated_path = []
   i = 0
-  current = robot
+  current = robot * 1.0
 
   while True:
     current_cell = convert.from_world2( current )
     next_cell = convert.from_world2( world_path[i] )
-    if np.linalg.norm( current_cell - next_cell ) < 0:
+    if ( current_cell[:2] == next_cell[:2] ).all():
       i += 1
-    if not i < len( interpolated_path ):
+    if not i < len( world_path ):
       break
     current[2:] = world_path[i][:2] - current[:2] 
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
@@ -103,6 +103,9 @@ def callback( data ):
   if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age: 
     return
 
+  rospy.loginfo( "Here0: %f" % ( rospy.get_rostime().to_sec() - data.header.stamp.to_sec() ) )
+
+
   other = []
   robot  = None
 
@@ -120,9 +123,8 @@ def callback( data ):
     robot, other, parms.goal, parms.speed 
   )
 
-
   if len( path ) > 1:
-    set_agent_state( parms.target_id, robot[0], robot[1], result[1][0] - robot[0], result[1][1] - robot[1] )
+    set_agent_state( parms.target_id, robot[0], robot[1], path[3][0] - robot[0], path[3][1] - robot[1] )
 
 
 

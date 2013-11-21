@@ -1,3 +1,10 @@
+import sys
+import os
+
+BASE_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), "..", ".." ) )
+path     = os.path.abspath( os.path.join( BASE_DIR, "python" ) )
+sys.path.append( path )
+
 import numpy as np
 import momo
 from math import *
@@ -32,10 +39,6 @@ class convert( object ):
     self.x2 = self.x + self.width
     self.y2 = self.y + self.height
 
-    print 'Grid dimensions'
-    print self.x, self.y, self.x2, self.y2
-    print self.grid_width, self.grid_height
-
   def rebase_frame( self, frame ):
     origin = self.to_world2( np.array( [0, 0, 0] ) )
     origin[2:] *= 0
@@ -56,8 +59,8 @@ class convert( object ):
         k = i
         dist = d
     return np.array( [
-      int( round( ( v[0] - self.x ) / self.delta ) - 0.5 ),\
-      int( round( ( v[1] - self.y ) / self.delta ) - 0.5 ), k
+      int( ceil( ( v[0] - self.x ) / self.delta ) - 0.5 ),\
+      int( ceil( ( v[1] - self.y ) / self.delta ) - 0.5 ), k
     ], dtype = np.int32 )
 
   def from_world2( self, v ):
@@ -128,3 +131,12 @@ class convert( object ):
       frame["frames"] = frames
       frame["frame_nums"] = frame_nums
     return frame_data
+
+
+if __name__ == "__main__":
+  c = convert( {"x1": 0., "y1": 0., "x2": 41.0, "y2": 41.0}, 1.0 )
+  print c.x, c.y, c.x2, c.y2
+  print c.from_world( ( 0.0, 0.0, 0.0, 0.0 ) )
+  print c.from_world( ( 4.52, 31.41, 0.0, 0.0 ) )
+  print c.from_world( ( 4.50010, 31.50010, 0.0, 0.0 ) )
+  print c.to_world2( ( 0, 0, 0 ) )
