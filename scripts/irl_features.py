@@ -39,7 +39,7 @@ def get_params():
   result.max_msg_age = param( "max_msg_age" )
   return result
 
-def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
+def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
   # Build planning objects
   convert = momo.convert( { "x1": x1, "y1": y1, "x2": x2, "y2": y2 }, cell_size )
   features = momo.features.__dict__[feature_type]
@@ -49,12 +49,12 @@ def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other,
 
   # Compute features and costs
   f = compute_features( speed, other )
-  costs = compute_costs( f, parms.weights )
+  costs = compute_costs( f, weights )
 
   # Plan
 
   current = convert.from_world2( robot )
-  goal = convert.from_world2( parms.goal )
+  goal = convert.from_world2( goal )
 
   cummulated, parents = planner( costs, goal )
   path = planner.get_path( parents, current )
@@ -69,10 +69,10 @@ def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other,
 
   while True:
     current_cell = convert.from_world2( current )
-    next_cell = convert_from_world2( world_path[i] )
-    if current_cell == next_cell:
-      j += 1
-    if not j < len( interpolated_path ):
+    next_cell = convert.from_world2( world_path[i] )
+    if np.linalg.norm( current_cell - next_cell ) < 0:
+      i += 1
+    if not i < len( interpolated_path ):
       break
     current[2:] = world_path[i][:2] - current[:2] 
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
@@ -81,9 +81,9 @@ def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other,
   return interpolated_path
 
 
-def set_agent_state( agent_id, x, y, vx, vy ):
+def set_agent_state( target_id, x, y, vx, vy ):
     a = AgentState()
-    a.id = parms.target_id
+    a.id = target_id
     a.position.x = x
     a.position.y = y
     a.velocity.x = vx
@@ -115,9 +115,9 @@ def callback( data ):
   other = np.array( other )
 
   path = plan( 
-    parms.feature_type, parms.feature_params, 
+    parms.weights, parms.feature_type, parms.feature_params, 
     parms.x1, parms.y1, parms.x2, parms.y2, parms.cell_size, 
-    robot, other, goal, parms.speed 
+    robot, other, parms.goal, parms.speed 
   )
 
 
