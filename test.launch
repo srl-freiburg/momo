@@ -1,5 +1,6 @@
 <launch>
   <param name="/irl_features/target_id" value="1" type="int"/>
+  <param name="/irl_features/max_msg_age" value="0.05" type="double"/>
   <param name="/irl_features/feature_type" value="smoke0"/>
   <param name="/irl_features/feature_params" value="{}"/>
   <param name="/irl_features/cell_size" value="1.0" type="double"/>

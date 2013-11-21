@@ -36,6 +36,7 @@ def get_params():
   result.x2   = param( "x2" )
   result.y1   = param( "y1" )
   result.y2   = param( "y2" )
+  result.max_msg_age = param( "max_msg_age" )
   return result
 
 def plan( feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
@@ -98,9 +99,9 @@ def set_agent_state( agent_id, x, y, vx, vy ):
     rospy.loginfo( "Command sent" )
 
 def callback( data ):
-  if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > 0.05: 
-    return
   parms = get_params()
+  if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age: 
+    return
 
   other = []
   robot  = None
