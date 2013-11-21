@@ -121,7 +121,7 @@ def callback( data ):
 
 
   if len( path ) > 1:
-    set_agent_state( parms.target_id, path[1][0], path[1][1], result[1][0] - robot[0], result[1][1] - robot[1] )
+    set_agent_state( parms.target_id, robot[0], robot[1], result[1][0] - robot[0], result[1][1] - robot[1] )
 
 
 
