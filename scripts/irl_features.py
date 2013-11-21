@@ -103,9 +103,6 @@ def callback( data ):
   if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age: 
     return
 
-  rospy.loginfo( "Here0: %f" % ( rospy.get_rostime().to_sec() - data.header.stamp.to_sec() ) )
-
-
   other = []
   robot  = None
 
