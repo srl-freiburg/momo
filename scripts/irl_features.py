@@ -30,7 +30,8 @@ def get_params():
   result.feature_params = ast.literal_eval( param( "feature_params" ) )
   result.weights = np.array( ast.literal_eval( param( "weights" ) ), dtype = np.float64 )
   result.goal = np.array( ast.literal_eval( param( "goal" ) ), dtype = np.float64 )
-  result.speed = param( "speed" )
+  result.goal_threshold = param( "speed" )
+  result.speed = param( "goal_threshold" )
   result.cell_size = param( "cell_size" )
   result.x1   = param( "x1" )
   result.x2   = param( "x2" )
@@ -67,17 +68,21 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   i = 0
   current = robot * 1.0
 
+
   while True:
     current_cell = convert.from_world2( current )
     next_cell = convert.from_world2( world_path[i] )
     if ( current_cell[:2] == next_cell[:2] ).all():
       i += 1
-    if not i < len( world_path ):
+    if not i < len( world_path ) or i > 1:
       break
     current[2:] = world_path[i][:2] - current[:2] 
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
     current[:2] += current[2:]
     interpolated_path.append( current * 1.0 )
+  if len( interpolated_path ) > 1:
+    sys.stderr.write( "Current: %f, %f\n" % ( robot[0], robot[1] ) )
+    sys.stderr.write( "Path[0]: %f, %f\n" % ( interpolated_path[1][0], interpolated_path[1][1] ) )
   return interpolated_path
 
 
@@ -120,8 +125,14 @@ def callback( data ):
     robot, other, parms.goal, parms.speed 
   )
 
-  if len( path ) > 1:
-    set_agent_state( parms.target_id, robot[0], robot[1], path[3][0] - robot[0], path[3][1] - robot[1] )
+  distance = 0.0
+  if len( path ) > 2:
+    distance = np.linalg.norm( robot[:2] - path[2][:2] )
+
+  if distance > parms.goal_threshold:
+    set_agent_state( parms.target_id, robot[0], robot[1], path[1][2], path[1][3] )
+  else:
+    set_agent_state( parms.target_id, 0, 0, 0, 0 )
 
 
 
