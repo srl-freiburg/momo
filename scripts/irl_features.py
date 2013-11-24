@@ -75,7 +75,7 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
     if ( current_cell[:2] == next_cell[:2] ).all():
       i += 1
     if not i < len( world_path ):# or i > 1:
-      sys.stderr.write( "Breaking with i:= (%d, %d)\n" % (i,  len(world_path) ) )
+      #sys.stderr.write( "Breaking with i:= (%d, %d)\n" % (i,  len(world_path) ) )
       break
     current[2:] = world_path[i][:2] - current[:2] 
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
@@ -115,6 +115,7 @@ def callback( data ):
 
   for a in data.agent_states:
     v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
+    # TODO - change to agent type
     if a.id == parms.target_id:
       robot = v
     else:
