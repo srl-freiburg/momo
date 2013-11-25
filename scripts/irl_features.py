@@ -32,8 +32,8 @@ def get_params():
   result.feature_params = ast.literal_eval( param( "feature_params" ) )
   result.weights = np.array( ast.literal_eval( param( "weights" ) ), dtype = np.float64 )
   result.goal = np.array( ast.literal_eval( param( "goal" ) ), dtype = np.float64 )
-  result.goal_threshold = param( "speed" )
-  result.speed = param( "goal_threshold" )
+  result.goal_threshold = param( "goal_threshold" )
+  result.speed = param( "speed" )
   result.cell_size = param( "cell_size" )
   result.x1   = param( "x1" )
   result.x2   = param( "x2" )
@@ -83,14 +83,6 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
     current[:2] += current[2:]
     interpolated_path.append( current * 1.0 )
-  sys.stderr.write( "-" * 80 + "\n" )
-  sys.stderr.write( "World path length: %i\n" % len( world_path ) ) 
-  sys.stderr.write( "Inter path length: %i\n" % len( interpolated_path ) ) 
-  sys.stderr.write( "Current: %f, %f\n" % ( robot[0], robot[1] ) )
-  sys.stderr.write( "Goal: %f, %f\n" % ( goal[0], goal[1] ) )
-  if len( interpolated_path ) > LOOKAHEAD:
-    sys.stderr.write( "Path[%i]: %f, %f\n" % ( LOOKAHEAD, interpolated_path[LOOKAHEAD][0], interpolated_path[LOOKAHEAD][1] ) )
-    sys.stderr.write( "Velo[%i]: %f, %f\n" % ( LOOKAHEAD, interpolated_path[LOOKAHEAD][2], interpolated_path[LOOKAHEAD][3] ) )
   return interpolated_path
 
 
@@ -102,11 +94,10 @@ def set_agent_state( target_id, x, y, vx, vy ):
     a.velocity.x = vx
     a.velocity.y = vy
 
-    rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( x, y, vx, vy ) )
-    sys.stderr.write( "Waiting to send command: %f, %f, %f, %f\n" % ( x, y, vx, vy ) )
     rospy.wait_for_service( "SetAgentState" )
     try:
       set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
+      rospy.loginfo( "Sent command: %f, %f, %f, %f" % ( x, y, vx, vy ) )
       result = set_agent_status( a )
     except rospy.ServiceException, e:
       rospy.logerr( "Service call failed: %s" % e )
@@ -135,8 +126,8 @@ def callback( data ):
   )
 
   distance = 0.0
-  if len( path ) >= LOOKAHEAD:
-    distance = np.linalg.norm( robot[:2] - path[-1][:2] )
+  if len( path ) > LOOKAHEAD:
+    distance = np.linalg.norm( robot[:2] - parms.goal[:2] )
 
   if distance > parms.goal_threshold:
     set_agent_state( parms.target_id, robot[0], robot[1], path[LOOKAHEAD][2], path[LOOKAHEAD][3] )
