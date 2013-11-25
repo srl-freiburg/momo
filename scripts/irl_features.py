@@ -15,6 +15,8 @@ sys.path.append( path )
 
 import momo
 
+LOOKAHEAD = 1
+
 class Params( object ): pass
 
 def param( name, default = None ):
@@ -55,9 +57,9 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   # Plan
 
   current = convert.from_world2( robot )
-  goal = convert.from_world2( goal )
+  grid_goal = convert.from_world2( goal )
 
-  cummulated, parents = planner( costs, goal )
+  cummulated, parents = planner( costs, grid_goal )
   path = planner.get_path( parents, current )
 
   world_path = []
@@ -69,20 +71,26 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   current = robot * 1.0
 
 
+
   while True:
     current_cell = convert.from_world2( current )
     next_cell = convert.from_world2( world_path[i] )
     if ( current_cell[:2] == next_cell[:2] ).all():
       i += 1
-    if not i < len( world_path ) or i > 1:
+    if i > LOOKAHEAD + 1 or i >= len( world_path ):
       break
     current[2:] = world_path[i][:2] - current[:2] 
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
     current[:2] += current[2:]
     interpolated_path.append( current * 1.0 )
-  if len( interpolated_path ) > 1:
-    sys.stderr.write( "Current: %f, %f\n" % ( robot[0], robot[1] ) )
-    sys.stderr.write( "Path[0]: %f, %f\n" % ( interpolated_path[1][0], interpolated_path[1][1] ) )
+  sys.stderr.write( "-" * 80 + "\n" )
+  sys.stderr.write( "World path length: %i\n" % len( world_path ) ) 
+  sys.stderr.write( "Inter path length: %i\n" % len( interpolated_path ) ) 
+  sys.stderr.write( "Current: %f, %f\n" % ( robot[0], robot[1] ) )
+  sys.stderr.write( "Goal: %f, %f\n" % ( goal[0], goal[1] ) )
+  if len( interpolated_path ) > LOOKAHEAD:
+    sys.stderr.write( "Path[%i]: %f, %f\n" % ( LOOKAHEAD, interpolated_path[LOOKAHEAD][0], interpolated_path[LOOKAHEAD][1] ) )
+    sys.stderr.write( "Velo[%i]: %f, %f\n" % ( LOOKAHEAD, interpolated_path[LOOKAHEAD][2], interpolated_path[LOOKAHEAD][3] ) )
   return interpolated_path
 
 
@@ -95,6 +103,7 @@ def set_agent_state( target_id, x, y, vx, vy ):
     a.velocity.y = vy
 
     rospy.loginfo( "Waiting to send command: %f, %f, %f, %f" % ( x, y, vx, vy ) )
+    sys.stderr.write( "Waiting to send command: %f, %f, %f, %f\n" % ( x, y, vx, vy ) )
     rospy.wait_for_service( "SetAgentState" )
     try:
       set_agent_status = rospy.ServiceProxy( "SetAgentState", SetAgentState )
@@ -126,11 +135,11 @@ def callback( data ):
   )
 
   distance = 0.0
-  if len( path ) > 2:
-    distance = np.linalg.norm( robot[:2] - path[2][:2] )
+  if len( path ) >= LOOKAHEAD:
+    distance = np.linalg.norm( robot[:2] - path[-1][:2] )
 
   if distance > parms.goal_threshold:
-    set_agent_state( parms.target_id, robot[0], robot[1], path[1][2], path[1][3] )
+    set_agent_state( parms.target_id, robot[0], robot[1], path[LOOKAHEAD][2], path[LOOKAHEAD][3] )
   else:
     set_agent_state( parms.target_id, 0, 0, 0, 0 )
 
