@@ -18,6 +18,7 @@ sys.path.append( path )
 import momo
 
 LOOKAHEAD = 1
+OBSTACLES = None
 
 # path publisher
 pub = rospy.Publisher('planned_path', Path)
@@ -74,6 +75,8 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   # Compute features and costs
   f = compute_features( speed, other )
   costs = compute_costs( f, weights )
+
+  rospy.loginfo("Cost dimensions: %d, %d %d", costs.shape[0], costs.shape[1], costs.shape[1])
 
   # Plan
 
@@ -158,6 +161,12 @@ def callback( data ):
     set_agent_state( parms.target_id, robot[0], robot[1], path[LOOKAHEAD][2], path[LOOKAHEAD][3] )
   else:
     set_agent_state( parms.target_id, 0, 0, 0, 0 )
+
+
+def obstacle_callback( data ):
+  OBSTACLES = np.zeros([300, 150])
+  for cell in data.cells:
+    OBSTACLES[cell.x, cell.y] = 1000
 
 
 
