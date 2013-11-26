@@ -23,7 +23,7 @@
   <param name="/irl_features/y2" value="80.0" type="double"/>
 
   <param name="/irl_features/goal" value="[5.0, 5.0, -1.0, 0.0]"/>
-  <param name="/irl_features/speed" value="0.8" type="double"/>
+  <param name="/irl_features/speed" value="1.0" type="double"/>
   <param name="/irl_features/goal_threshold" value="1.0" type="double"/>
 
   <node name="irl_features" pkg="momo" type="irl_features.py"/>
