@@ -3,7 +3,7 @@ import rospy
 import numpy as np
 from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
-from nav_msgs.msg import Path
+from nav_msgs.msg import Path, GridCells
 from geometry_msgs.msg import PoseStamped
 from pedsim_srvs.srv import SetAgentState
 import ast
@@ -76,7 +76,13 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   f = compute_features( speed, other )
   costs = compute_costs( f, weights )
 
-  rospy.loginfo("Cost dimensions: %d, %d %d", costs.shape[0], costs.shape[1], costs.shape[1])
+
+  # bring in obstacles
+  global OBSTACLES
+  if OBSTACLES is not None:
+    for obs in OBSTACLES:
+      costs[:, obs[1], obs[0]] = 10000
+
 
   # Plan
 
@@ -164,9 +170,10 @@ def callback( data ):
 
 
 def obstacle_callback( data ):
-  OBSTACLES = np.zeros([300, 150])
+  global OBSTACLES
+  OBSTACLES = []
   for cell in data.cells:
-    OBSTACLES[cell.x, cell.y] = 1000
+    OBSTACLES.append([int(cell.x-0.5), int(cell.y-0.5)])
 
 
 
@@ -174,6 +181,7 @@ def listener():
   rospy.init_node( 'irl_features' )
   p = get_params()
   rospy.Subscriber( "AllAgentsStatus", AllAgentsState, callback )
+  rospy.Subscriber( "static_obstacles", GridCells, obstacle_callback )
   rospy.spin()
 
 

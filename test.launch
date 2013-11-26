@@ -9,21 +9,25 @@
   <param name="/irl_features/max_msg_age" value="0.1" type="double"/>
 
   <param name="/irl_features/target_id" value="1" type="int"/>
-  <param name="/irl_features/feature_type" value="constant"/>
+  
+  <!-- feature -->
+  <!-- <param name="/irl_features/feature_type" value="constant"/>
   <param name="/irl_features/feature_params" value="{}"/>
-  <param name="/irl_features/weights" value="[1.0]"/>
+  <param name="/irl_features/weights" value="[1.0]"/> -->
 
-<!--   <param name="/irl_features/feature_type" value="helbing"/>
+  <param name="/irl_features/feature_type" value="helbing"/>
   <param name="/irl_features/feature_params" value="{'radius': 2.0}"/>
-  <param name="/irl_features/weights" value="[1.0, 1.0, 1.0]"/>
- -->
+  <param name="/irl_features/weights" value="[0.1, 1.0, 1.0]"/>
+
+
+  <!-- grid dimension -->
   <param name="/irl_features/cell_size" value="1.0" type="double"/>
   <param name="/irl_features/x1" value="0.0" type="double"/>
   <param name="/irl_features/y1" value="0.0" type="double"/>
   <!-- <param name="/irl_features/x2" value="80.0" type="double"/> -->
   <!-- <param name="/irl_features/y2" value="80.0" type="double"/> -->
-  <param name="/irl_features/x2" value="350.0" type="double"/>
-  <param name="/irl_features/y2" value="150.0" type="double"/>
+  <param name="/irl_features/x2" value="310.0" type="double"/>
+  <param name="/irl_features/y2" value="110.0" type="double"/>
 
   <!-- <param name="/irl_features/goal" value="[5.0, 5.0, -1.0, 0.0]"/> -->
   <param name="/irl_features/goal" value="[200.0, 75.0, -1.0, 0.0]"/>
