@@ -1,7 +1,7 @@
 <launch>
   <param name="/simulator/scene_file" value="$(find simulator)test/grid_test_large.xml" type="string"/>
   <param name="/simulator/cell_size" value="1.0" type="double"/>
-  <node name="simulator" pkg="simulator" type="simulator"/>
+  <node name="simulator" pkg="simulator" type="simulator" output="screen"/>
 
   <node name="simulator_tf_broadcaster" pkg="simulator" type="dummy_transforms.py" respawn="false" output="screen" />
 
@@ -26,5 +26,5 @@
   <param name="/irl_features/speed" value="1.0" type="double"/>
   <param name="/irl_features/goal_threshold" value="1.0" type="double"/>
 
-  <node name="irl_features" pkg="momo" type="irl_features.py"/>
+  <node name="irl_features" pkg="momo" type="irl_features.py" />
 </launch>

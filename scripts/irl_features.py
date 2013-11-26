@@ -3,6 +3,8 @@ import rospy
 import numpy as np
 from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
 from pedsim_srvs.srv import SetAgentState
 import ast
 
@@ -16,6 +18,9 @@ sys.path.append( path )
 import momo
 
 LOOKAHEAD = 1
+
+# path publisher
+pub = rospy.Publisher('planned_path', Path)
 
 class Params( object ): pass
 
@@ -41,6 +46,22 @@ def get_params():
   result.y2   = param( "y2" )
   result.max_msg_age = param( "max_msg_age" )
   return result
+
+def publish_path(plan):
+  p = []
+  for item in plan:
+    pose = PoseStamped()
+    pose.pose.position.x = item[0]
+    pose.pose.position.y = item[1]
+    pose.header.stamp = rospy.Time.now()
+    p.append(pose)
+
+  path = Path()
+  path.header.stamp = rospy.Time.now()
+  path.header.frame_id = "world"
+  path.poses = p
+  pub.publish(path)
+
 
 def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
   # Build planning objects
@@ -84,6 +105,8 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
     current[2:] = speed * current[2:] / np.linalg.norm( current[2:] )
     current[:2] += current[2:]
     interpolated_path.append( current * 1.0 )
+
+  publish_path(world_path)
   return interpolated_path
 
 
