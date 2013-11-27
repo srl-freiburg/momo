@@ -15,9 +15,13 @@
   <param name="/irl_features/feature_params" value="{}"/>
   <param name="/irl_features/weights" value="[1.0]"/> -->
 
-  <param name="/irl_features/feature_type" value="helbing"/>
-  <param name="/irl_features/feature_params" value="{'radius': 2.0}"/>
-  <param name="/irl_features/weights" value="[0.1, 1.0, 1.0]"/>
+  <!-- <param name="/irl_features/feature_type" value="helbing"/>
+  <param name="/irl_features/feature_params" value="{'radius': 4.5}"/>
+  <param name="/irl_features/weights" value="[1.0, 0.0, 0.0]"/> -->
+
+  <param name="/irl_features/feature_type" value="anisotropic"/>
+  <param name="/irl_features/feature_params" value="{'radius': 4.5}"/>
+  <param name="/irl_features/weights" value="[0.1, 0.001, 0.1]"/>
 
 
   <!-- grid dimension -->

@@ -3,7 +3,7 @@ import rospy
 import numpy as np
 from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
-from nav_msgs.msg import Path, GridCells
+from nav_msgs.msg import Path, GridCells, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from pedsim_srvs.srv import SetAgentState
 import ast
@@ -22,6 +22,7 @@ OBSTACLES = None
 
 # path publisher
 pub = rospy.Publisher('planned_path', Path)
+cost_pub = rospy.Publisher('costmap', OccupancyGrid)
 
 class Params( object ): pass
 
@@ -64,6 +65,23 @@ def publish_path(plan):
   pub.publish(path)
 
 
+def publish_costmap(costs):
+  c = []
+  cc = (np.sum(costs, axis=0) / 8 ).astype(np.int8)
+  # cc = costs[1,:,:].astype(np.int8)
+  w,h = cc.shape
+  c = np.reshape(cc, w*h)
+
+  ocg = OccupancyGrid()
+  ocg.header.stamp = rospy.Time.now()
+  ocg.header.frame_id = "world"
+  ocg.data = c
+  ocg.info.resolution = 1
+  ocg.info.width = h
+  ocg.info.height = w
+  cost_pub.publish(ocg)
+
+
 def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):
   # Build planning objects
   convert = momo.convert( { "x1": x1, "y1": y1, "x2": x2, "y2": y2 }, cell_size )
@@ -82,7 +100,6 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   if OBSTACLES is not None:
     for obs in OBSTACLES:
       costs[:, obs[1], obs[0]] = 10000
-
 
   # Plan
 
@@ -116,6 +133,7 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
     interpolated_path.append( current * 1.0 )
 
   publish_path(world_path)
+  publish_costmap(costs)
   return interpolated_path
 
 
