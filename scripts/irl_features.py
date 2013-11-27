@@ -67,7 +67,8 @@ def publish_path(plan):
 
 def publish_costmap(costs):
   c = []
-  cc = (np.sum(costs, axis=0) / 8 ).astype(np.int8)
+  # cc = (np.sum(costs, axis=0) / 8 ).astype(np.int8)
+  cc = (np.sum(costs, axis=0)).astype(np.int8)
   # cc = costs[1,:,:].astype(np.int8)
   w,h = cc.shape
   c = np.reshape(cc, w*h)
@@ -99,7 +100,7 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   global OBSTACLES
   if OBSTACLES is not None:
     for obs in OBSTACLES:
-      costs[:, obs[1], obs[0]] = 10000
+      costs[:, obs[1], obs[0]] = 500
 
   # Plan
 
