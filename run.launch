@@ -46,5 +46,5 @@
   <param name="/irl_features/speed" value="1.0" type="double"/>
   <param name="/irl_features/goal_threshold" value="1.0" type="double"/>
 
-  <node name="irl_features" pkg="momo" type="irl_features.py" />
+  <node name="irl_features" pkg="momo" type="momo_ros.py" />
 </launch>
