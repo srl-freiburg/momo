@@ -1,50 +1,12 @@
 <launch>
+  <!-- params -->
   <!-- <param name="/simulator/scene_file" value="$(find simulator)test/grid_test_large.xml" type="string"/> -->
   <param name="/simulator/scene_file" value="$(find simulator)test/birth_death_test.xml" type="string"/>
-  <param name="/simulator/cell_size" value="1.0" type="double"/>
+  <rosparam command="load" file="$(find momo)/config/parameters.yaml" />
+
+  <!-- nodes -->
   <node name="simulator" pkg="simulator" type="simulator" output="screen"/>
-
   <node name="simulator_tf_broadcaster" pkg="simulator" type="dummy_transforms.py" respawn="false" output="screen" />
-
-  <param name="/irl_features/max_msg_age" value="0.1" type="double"/>
-
-  <param name="/irl_features/target_id" value="1" type="int"/>
-  
-  <!-- feature -->
-  <param name="/irl_features/feature_type" value="constant"/>
-  <param name="/irl_features/feature_params" value="{}"/>
-  <param name="/irl_features/weights" value="[400.0]"/>
-
-  <!-- <param name="/irl_features/feature_type" value="helbing"/>
-  <param name="/irl_features/feature_params" value="{'radius': 20.5}"/>
-  <param name="/irl_features/weights" value="[0.001, 10.0, 1.0]"/> -->
-
-  <!-- <param name="/irl_features/feature_type" value="anisotropic"/>
-  <param name="/irl_features/feature_params" value="{'radius': 10.5}"/>
-  <param name="/irl_features/weights" value="[0.1, 30.001, 0.1]"/> -->
-
-  <!-- <param name="/irl_features/feature_type" value="icra14"/>
-  <param name="/irl_features/feature_params" value="{'radius': 20.0}"/>
-  <param name="/irl_features/weights" value="[20.1, 15.5, 10.9, 0.1, 0.1, 0.1, 100.9, 100.9, 100.9, 55.5, 55.5, 55.5]"/> -->
-
-  <!-- <param name="/irl_features/feature_type" value="kimlike_default"/>
-  <param name="/irl_features/feature_params" value="{'radius': 20.0}"/>
-  <param name="/irl_features/weights" value="[0.1, 5.5, 10.9, 0.1, 10.9, 55.5, 0.1, 10.9, 55.5]"/> -->
-
-
-  <!-- grid dimension -->
-  <param name="/irl_features/cell_size" value="1.0" type="double"/>
-  <param name="/irl_features/x1" value="0.0" type="double"/>
-  <param name="/irl_features/y1" value="0.0" type="double"/>
-  <!-- <param name="/irl_features/x2" value="44.0" type="double"/> -->
-  <!-- <param name="/irl_features/y2" value="44.0" type="double"/> -->
-  <param name="/irl_features/x2" value="310.0" type="double"/>
-  <param name="/irl_features/y2" value="110.0" type="double"/>
-
-  <!-- <param name="/irl_features/goal" value="[5.0, 5.0, -1.0, -1.0]"/> -->
-  <param name="/irl_features/goal" value="[195.0, 75.0, 1.0, 0.0]"/>
-  <param name="/irl_features/speed" value="1.0" type="double"/>
-  <param name="/irl_features/goal_threshold" value="1.0" type="double"/>
-
   <node name="irl_features" pkg="momo" type="momo_ros.py" />
+
 </launch>

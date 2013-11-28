@@ -1,0 +1,17 @@
+# irl feature parameters
+irl_features:
+    max_msg_age: 0.1
+    target_id: 1
+    feature_type: "helbing"
+    feature_params: "{'radius': 7.5}"
+    weights: "[0.1, 10.0, 1.0]"
+
+    cell_size: 1.0
+    x1: 0.0
+    y1: 0.0
+    x2: 310.0
+    y2: 110.0
+
+    goal: "[195.0, 75.0, 1.0, 0.0]"
+    speed: 1.0
+    goal_threshold: 1.0
