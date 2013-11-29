@@ -12,7 +12,6 @@ from pedsim_msgs.msg import AllAgentsState
 from nav_msgs.msg import Path, GridCells, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
-from pedsim_srvs.srv import SetAgentState
 import ast
 
 import sys
@@ -192,24 +191,6 @@ class MomoROS(object):
 
         return interpolated_path
 
-    def set_agent_state(self, target_id, x, y, vx, vy):
-        a = AgentState()
-        a.id = target_id
-        a.position.x = x
-        a.position.y = y
-        a.velocity.x = vx
-        a.velocity.y = vy
-
-        rospy.wait_for_service("SetAgentState")
-        try:
-            set_agent_status = rospy.ServiceProxy(
-                "SetAgentState", SetAgentState)
-            rospy.loginfo("Sent command: %f, %f, %f, %f" % (x, y, vx, vy))
-            result = set_agent_status(a)
-        except rospy.ServiceException, e:
-            rospy.logerr("Service call failed: %s" % e)
-        rospy.loginfo("Command sent")
-
     def callback_agent_status(self, data):
         parms = get_params()
         if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age:
@@ -243,9 +224,6 @@ class MomoROS(object):
         if distance > parms.goal_threshold:
             self.publish_robot_state(parms.target_id, robot[0], robot[1],
                 path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
-            # self.set_agent_state(
-            # parms.target_id, robot[0], robot[1],
-            # path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
         else:
             self.GOAL_REACHED = True
             self.publish_robot_state(parms.target_id, 0, 0, 0, 0)
