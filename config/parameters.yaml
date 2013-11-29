@@ -2,9 +2,10 @@
 irl_features:
     max_msg_age: 0.1
     target_id: 1
-    feature_type: "helbing"
-    feature_params: "{'radius': 7.5}"
-    weights: "[0.1, 10.0, 1.0]"
+    feature_type: "icra14"
+    feature_params: "{'radius': 37.5}"
+    # weights: "[10.1, 5.5, 0.09, 0.001, 0.001, 0.001, 10.9, 10.9, 10.9, 5.5, 5.5, 5.5]"
+    weights: "[0.1, 5.5, 20.09, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
 
     cell_size: 1.0
     x1: 0.0

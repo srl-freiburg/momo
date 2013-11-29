@@ -11,6 +11,7 @@ from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
 from nav_msgs.msg import Path, GridCells, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import String
 from pedsim_srvs.srv import SetAgentState
 import ast
 
@@ -59,6 +60,7 @@ class MomoROS(object):
 
     LOOKAHEAD = 1
     OBSTACLES = None
+    GOAL_REACHED = False
 
     """ ROS interface for momo """
 
@@ -77,11 +79,13 @@ class MomoROS(object):
         # publishers
         self.pub_plan = rospy.Publisher('planned_path', Path)
         self.pub_cost = rospy.Publisher('costmap', OccupancyGrid)
+        self.pub_goal_status = rospy.Publisher('goal_status', String)
+        self.pub_agent_state = rospy.Publisher('robot_state', AgentState)
 
         # subscribers
-        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback)
-        rospy.Subscriber("static_obstacles", GridCells, self.obstacle_callback)
-        
+        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status)
+        rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles)
+
 
     def publish_path(self, plan):
         p = []
@@ -114,6 +118,22 @@ class MomoROS(object):
         ocg.info.width = h
         ocg.info.height = w
         self.pub_cost.publish(ocg)
+
+    def publish_goal_status(self):
+        if self.GOAL_REACHED is True:
+            self.pub_goal_status.publish('Arrived')
+        else:
+            self.pub_goal_status.publish('Travelling')
+
+    def publish_robot_state(self, target_id, x, y, vx, vy):
+        a = AgentState()
+        a.id = target_id
+        a.position.x = x
+        a.position.y = y
+        a.velocity.x = vx
+        a.velocity.y = vy
+        self.pub_agent_state.publish(a)
+
 
     def _build_compute_objects(self, feature_type, feature_params,
                                x1, x2, y1, y2, cell_size):
@@ -168,6 +188,7 @@ class MomoROS(object):
 
         self.publish_path(world_path)
         self.publish_costmap(costs)
+        self.publish_goal_status()
 
         return interpolated_path
 
@@ -189,7 +210,7 @@ class MomoROS(object):
             rospy.logerr("Service call failed: %s" % e)
         rospy.loginfo("Command sent")
 
-    def callback(self, data):
+    def callback_agent_status(self, data):
         parms = get_params()
         if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age:
             return
@@ -220,13 +241,16 @@ class MomoROS(object):
             distance = np.linalg.norm(robot[:2] - parms.goal[:2])
 
         if distance > parms.goal_threshold:
-            self.set_agent_state(
-                parms.target_id, robot[0], robot[1],
+            self.publish_robot_state(parms.target_id, robot[0], robot[1],
                 path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
+            # self.set_agent_state(
+            # parms.target_id, robot[0], robot[1],
+            # path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
         else:
-            self.set_agent_state(parms.target_id, 0, 0, 0, 0)
+            self.GOAL_REACHED = True
+            self.publish_robot_state(parms.target_id, 0, 0, 0, 0)
 
-    def obstacle_callback(self, data):
+    def callback_obstacles(self, data):
         self.OBSTACLES = []
         for cell in data.cells:
             self.OBSTACLES.append([int(cell.x - 0.5), int(cell.y - 0.5)])
