@@ -1,7 +1,7 @@
 import numpy as np
 from math import *
 
-FEATURE_LENGTH = 3
+FEATURE_LENGTH = 4
 
 LAMBDA  = 0.3 
 

@@ -49,7 +49,7 @@ def get_params():
   result.max_msg_age = param( "max_msg_age" )
   return result
 
-def publish_path(plan):
+def publish_path( plan ):
   p = []
   for item in plan:
     pose = PoseStamped()
@@ -62,16 +62,15 @@ def publish_path(plan):
   path.header.stamp = rospy.Time.now()
   path.header.frame_id = "world"
   path.poses = p
-  pub.publish(path)
+  pub.publish( path )
 
 
-def publish_costmap(costs):
-  c = []
-  # cc = (np.sum(costs, axis=0) / 8 ).astype(np.int8)
-  cc = (np.sum(costs, axis=0)).astype(np.int8)
-  # cc = costs[1,:,:].astype(np.int8)
-  w,h = cc.shape
-  c = np.reshape(cc, w*h)
+def publish_costmap( costs ):
+  cc = np.sum( costs, axis=0 )
+  cc *= 100.0 / np.max( cc )
+  cc = cc.astype( np.int8 )
+  w, h = cc.shape
+  c = np.reshape( cc, w * h )
 
   ocg = OccupancyGrid()
   ocg.header.stamp = rospy.Time.now()
@@ -80,7 +79,7 @@ def publish_costmap(costs):
   ocg.info.resolution = 1
   ocg.info.width = h
   ocg.info.height = w
-  cost_pub.publish(ocg)
+  cost_pub.publish( ocg )
 
 
 def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robot, other, goal, speed ):

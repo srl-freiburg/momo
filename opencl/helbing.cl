@@ -17,7 +17,7 @@ void computeFeature(
   float lambda, __constant float * angles,
   float * feature 
 ) {
-  for ( int i = 0; i < 3; i++ ) {
+  for ( int i = 0; i < 4; i++ ) {
     feature[i] = 0.;
   }
   for ( int i = 0; i < frameSize; i++ ) {
@@ -35,6 +35,7 @@ void computeFeature(
       feature[maxIdx( cosPhi, angles, 3 )] += 1;
     }
   }
+  feature[4] = 1;
 }
 
 __kernel void computeFeatures( 
@@ -52,7 +53,7 @@ __kernel void computeFeatures(
   float2 dir      = normalize( directions[direction] );
   float2 velocity = dir * speed; 
   float2 position = (float2)( column * delta, row * delta );
-  float f[3];
+  float f[4];
   
   computeFeature( position, velocity, radius, frameSize, frame, lambda, angles, f );
 
