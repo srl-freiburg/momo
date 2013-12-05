@@ -66,7 +66,8 @@ def publish_path( plan ):
 
 
 def publish_costmap( costs ):
-  cc = np.sum( costs, axis=0 )
+  #cc = np.sum( costs, axis=0 )
+  cc = costs[0] * 1.0
   cc *= 100.0 / np.max( cc )
   cc = cc.astype( np.int8 )
   w, h = cc.shape
@@ -93,6 +94,7 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   # Compute features and costs
   f = compute_features( speed, other )
   costs = compute_costs( f, weights )
+  costs[:, :, :] = 1.0
 
 
   # bring in obstacles

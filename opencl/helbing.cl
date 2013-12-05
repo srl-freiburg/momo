@@ -35,7 +35,7 @@ void computeFeature(
       feature[maxIdx( cosPhi, angles, 3 )] += 1;
     }
   }
-  feature[4] = 1;
+  feature[3] = 1;
 }
 
 __kernel void computeFeatures( 

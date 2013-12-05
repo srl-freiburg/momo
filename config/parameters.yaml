@@ -4,7 +4,7 @@ irl_features:
     target_id: 1
     feature_type: "helbing"
     feature_params: "{'radius': 5}"
-    weights: "[0.0, 0.0, 0.0, 1.0]"
+    weights: "[0.2, 0.1, 0.4, 0.2]"
 
     cell_size: 1.0
     x1: 0.0

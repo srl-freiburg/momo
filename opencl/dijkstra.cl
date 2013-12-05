@@ -27,11 +27,12 @@ __kernel  void dijkstraPass1(
         dd -= 8;
       }
       int2 delta = directions[direction];
+      float l = length( (float2) ( delta.x, delta.y ) );
       int c = column - delta.x;
       int r = row - delta.y;
       if ( c >= 0 and c < width && r >= 0 && r < height ) {
         int newIndex = dd * width * height + r * width + c;
-        float g = cummulated[stateIndex] + costArray[stateIndex];
+        float g = cummulated[stateIndex] + costArray[stateIndex] * l;
         if ( tmpCummulated[newIndex] > g ) {
           tmpCummulated[newIndex] = g;
           tmpParents[newIndex] = stateIndex;

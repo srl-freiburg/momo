@@ -11,7 +11,6 @@ __kernel void computeCosts(
   unsigned int column    = get_global_id( 2 );
 
   float2 dir = directions[direction];
-  float l = length( dir );
 
   int base =  direction * width * height * featureLength 
             + row * width * featureLength
@@ -19,7 +18,7 @@ __kernel void computeCosts(
 
   double cost = 0;
   for ( int i = 0; i < featureLength; i++ ) {
-    cost += features[base + i] * theta[i] * l;
+    cost += features[base + i] * theta[i];
   }
   costs[direction * width * height + row * width + column] = cost;
 }
