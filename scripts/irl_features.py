@@ -94,14 +94,12 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   # Compute features and costs
   f = compute_features( speed, other )
   costs = compute_costs( f, weights )
-  costs[:, :, :] = 1.0
-
 
   # bring in obstacles
-  global OBSTACLES
-  if OBSTACLES is not None:
-    for obs in OBSTACLES:
-      costs[:, obs[1], obs[0]] = 500
+  #global OBSTACLES
+  #if OBSTACLES is not None:
+    #for obs in OBSTACLES:
+      #costs[:, obs[1], obs[0]] = 500
 
   # Plan
 
