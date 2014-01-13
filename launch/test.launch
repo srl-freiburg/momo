@@ -1,19 +1,16 @@
 <launch>
   <!-- simulator -->
-  <param name="/simulator/scene_file" value="$(find simulator)test/birth_death_test.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find simulator)scenarios/birth_death_test.xml" type="string"/>
   <param name="/simulator/cell_size" value="1.0" type="double"/>
   <node name="simulator" pkg="simulator" type="simulator" output="screen"/>
-
-  <node name="simulator_tf_broadcaster" pkg="simulator" type="dummy_transforms.py" respawn="false" output="screen" />
 
   <!-- planner -->
   <param name="/irl_features/target_id" value="1" type="int"/>
   <param name="/irl_features/max_msg_age" value="0.1" type="double"/>
-
   
   <param name="/irl_features/feature_type" value="helbing"/>
-  <param name="/irl_features/feature_params" value="{ 'radius': 5}"/>
-  <param name="/irl_features/weights" value="[0.3, 0.2, 0.1, 0.4]"/>
+  <param name="/irl_features/feature_params" value="{ 'radius': 3}"/>
+  <param name="/irl_features/weights" value="[0.1, 0.2, 0.3, 0.4]"/>
 
   <!-- grid dimension -->
   <param name="/irl_features/cell_size" value="1.0" type="double"/>

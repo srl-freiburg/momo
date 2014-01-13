@@ -16,11 +16,11 @@ class compute_costs( momo.opencl.Program ):
 
   def __call__( self, features, theta ):
     mf = cl.mem_flags
-    costs = np.zeros( (8, self.convert.grid_height, self.convert.grid_width ), dtype=np.float64 )
+    costs = np.zeros( (8, self.convert.grid_height, self.convert.grid_width ), dtype=np.float32 )
     feature_length = features.shape[3]
     
     features_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = features  )
-    theta_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = theta.astype( np.float64 )  )
+    theta_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = theta.astype( np.float32 )  )
     cost_buffer  = cl.Buffer( self.context, mf.WRITE_ONLY, costs.nbytes )
 
     self.flow.computeCosts( 

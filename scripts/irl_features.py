@@ -65,7 +65,7 @@ def publish_path( plan ):
   pub.publish( path )
 
 
-def publish_costmap( costs ):
+def publish_costmap( costs, cell_size ):
   #cc = np.sum( costs, axis=0 )
   cc = costs[0] * 1.0
   rospy.loginfo("CC Shape: %d, %d", cc.shape[0], cc.shape[1])
@@ -78,7 +78,7 @@ def publish_costmap( costs ):
   ocg.header.stamp = rospy.Time.now()
   ocg.header.frame_id = "world"
   ocg.data = c
-  ocg.info.resolution = 1
+  ocg.info.resolution = cell_size
   ocg.info.width = h
   ocg.info.height = w
   cost_pub.publish( ocg )
@@ -95,17 +95,14 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   # Compute features and costs
   f = compute_features( speed, other )
   costs = compute_costs( f, weights )
-  # costs[:, :, :] = 1.0
-
 
   # bring in obstacles
   global OBSTACLES
   if OBSTACLES is not None:
     for obs in OBSTACLES:
-      costs[:, obs[1], obs[0]] = 500
+      costs[:, obs[1] / cell_size, obs[0] / cell_size] = 50
 
   # Plan
-
   current = convert.from_world2( robot )
   grid_goal = convert.from_world2( goal )
 
@@ -135,8 +132,8 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
     current[:2] += current[2:]
     interpolated_path.append( current * 1.0 )
 
-  publish_path(world_path)
-  publish_costmap(costs)
+  publish_path( world_path )
+  publish_costmap( costs, cell_size )
   return interpolated_path
 
 
@@ -166,13 +163,14 @@ def callback( data ):
   robot  = None
 
   for a in data.agent_states:
-    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
+    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float32 )
     # TODO - change to agent type
     if a.id == parms.target_id:
       robot = v
     else:
       other.append( v )
   other = np.array( other )
+
 
   path = plan( 
     parms.weights, parms.feature_type, parms.feature_params, 
