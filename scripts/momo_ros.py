@@ -102,12 +102,12 @@ class MomoROS(object):
         self.pub_plan.publish(path)
 
     def publish_costmap(self, costs):
-        c = []
-        # cc = (np.sum(costs, axis=0) / 8 ).astype(np.int8)
-        cc = (np.sum(costs, axis=0)).astype(np.int8)
-        # cc = costs[1,:,:].astype(np.int8)
+        cc = np.sum( costs, axis=0 )
+        # cc = costs[0] * 1.0
+        cc *= 100.0 / np.max( cc )
+        cc = cc.astype( np.int8 )
         w, h = cc.shape
-        c = np.reshape(cc, w * h)
+        c = np.reshape( cc, w * h )
 
         ocg = OccupancyGrid()
         ocg.header.stamp = rospy.Time.now()
@@ -116,7 +116,7 @@ class MomoROS(object):
         ocg.info.resolution = 1
         ocg.info.width = h
         ocg.info.height = w
-        self.pub_cost.publish(ocg)
+        self.pub_cost.publish( ocg )
 
     def publish_goal_status(self):
         if self.GOAL_REACHED is True:
@@ -151,6 +151,7 @@ class MomoROS(object):
         # Compute features and costs
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
+        # costs[:, :, :] = 1.0
 
         # bring in obstacles
         if self.OBSTACLES is not None:

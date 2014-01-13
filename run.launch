@@ -1,12 +1,13 @@
 <launch>
   <!-- params -->
   <!-- <param name="/simulator/scene_file" value="$(find simulator)test/grid_test_large.xml" type="string"/> -->
-  <param name="/simulator/scene_file" value="$(find simulator)test/birth_death_test.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find simulator)scenarios/birth_death_test.xml" type="string"/>
   <rosparam command="load" file="$(find momo)/config/parameters.yaml" />
 
   <!-- nodes -->
   <node name="simulator" pkg="simulator" type="simulator" output="screen"/>
   <node name="simulator_tf_broadcaster" pkg="simulator" type="dummy_transforms.py" respawn="false" output="screen" />
-  <node name="irl_features" pkg="momo" type="momo_ros.py" />
+  <!-- <node name="irl_features" pkg="momo" type="momo_ros.py" /> -->
+  <node name="irl_features" pkg="momo" type="irl_features.py" />
 
 </launch>
