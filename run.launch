@@ -1,7 +1,7 @@
 <launch>
   <!-- params -->
   <!-- <param name="/simulator/scene_file" value="$(find simulator)test/grid_test_large.xml" type="string"/> -->
-  <param name="/simulator/scene_file" value="$(find simulator)scenarios/birth_death_test.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find simulator)scenarios/birth_death_test_small.xml" type="string"/>
   <rosparam command="load" file="$(find momo)/config/parameters.yaml" />
 
   <!-- nodes -->

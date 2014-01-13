@@ -93,4 +93,3 @@ __kernel void initializeBuffers(
   parents[stateIndex] = -1;
   tmpParents[stateIndex] = -1;
 }
-
