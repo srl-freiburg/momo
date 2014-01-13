@@ -4,7 +4,7 @@ __kernel void computeCosts(
   uint width, uint height, uint featureLength,
   __constant float2 * directions, 
   __global float * features,
-  __constant double * theta, __global double * costs
+  __constant float * theta, __global float * costs
 ) {
   unsigned int direction = get_global_id( 0 );
   unsigned int row       = get_global_id( 1 );
@@ -16,7 +16,7 @@ __kernel void computeCosts(
             + row * width * featureLength
             + column * featureLength;  
 
-  double cost = 0;
+  float cost = 0;
   for ( int i = 0; i < featureLength; i++ ) {
     cost += features[base + i] * theta[i];
   }

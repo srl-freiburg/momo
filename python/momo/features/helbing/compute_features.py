@@ -5,6 +5,8 @@ from __common__ import *
 import momo
 from momo.features import *
 
+import sys
+
 class compute_features( momo.opencl.Program ):
   def __init__( self, convert, radius ):
     momo.opencl.Program.__init__( self )
@@ -21,7 +23,9 @@ class compute_features( momo.opencl.Program ):
     mf = cl.mem_flags
     features = np.zeros( (8, self.convert.grid_height, self.convert.grid_width, FEATURE_LENGTH ), dtype=np.float32 )
 
-    frame_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = self.convert.rebase_frame( frame ).astype( np.float32 ) )
+    f = self.convert.rebase_frame( frame ).astype( np.float32 )
+
+    frame_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = f )
     feature_buffer = cl.Buffer( self.context, mf.WRITE_ONLY, features.nbytes )
 
     self.kimlike.computeFeatures( 

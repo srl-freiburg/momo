@@ -102,7 +102,6 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
       costs[:, obs[1] / cell_size, obs[0] / cell_size] = 50
 
   # Plan
-
   current = convert.from_world2( robot )
   grid_goal = convert.from_world2( goal )
 
@@ -163,13 +162,14 @@ def callback( data ):
   robot  = None
 
   for a in data.agent_states:
-    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float64 )
+    v = np.array( [a.position.x, a.position.y, a.velocity.x, a.velocity.y], dtype = np.float32 )
     # TODO - change to agent type
     if a.id == parms.target_id:
       robot = v
     else:
       other.append( v )
   other = np.array( other )
+
 
   path = plan( 
     parms.weights, parms.feature_type, parms.feature_params, 
