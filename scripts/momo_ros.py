@@ -101,7 +101,7 @@ class MomoROS(object):
         path.poses = p
         self.pub_plan.publish(path)
 
-    def publish_costmap(self, costs):
+    def publish_costmap(self, costs, cell_size):
         cc = np.sum( costs, axis=0 )
         # cc = costs[0] * 1.0
         cc *= 100.0 / np.max( cc )
@@ -113,7 +113,7 @@ class MomoROS(object):
         ocg.header.stamp = rospy.Time.now()
         ocg.header.frame_id = "world"
         ocg.data = c
-        ocg.info.resolution = 1
+        ocg.info.resolution = cell_size
         ocg.info.width = h
         ocg.info.height = w
         self.pub_cost.publish( ocg )
@@ -187,7 +187,7 @@ class MomoROS(object):
             interpolated_path.append(current * 1.0)
 
         self.publish_path(world_path)
-        self.publish_costmap(costs)
+        self.publish_costmap(costs, cell_size)
         self.publish_goal_status()
 
         return interpolated_path
