@@ -20,4 +20,8 @@ irl_features:
     speed: 1.0
     goal_threshold: 1.0
 
-    robot_state: 0.0
+    # flag for the robot to start moving (enabled after wait)
+    move_robot: 0.0
+
+    # flag for teleoperation mode
+    teleop_state: 1.0
