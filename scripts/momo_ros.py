@@ -102,24 +102,11 @@ class MomoROS(object):
         self.pub_plan.publish(path)
 
     def publish_costmap(self, costs, cell_size):
-        # cc = np.sum( costs, axis=0 )
-        # cc = costs[0] * 1.0
-        # cc *= 100.0 / np.max( cc )
-        # cc = cc.astype( np.int8 )
-        # w, h = cc.shape
-        # c = np.reshape( cc, w * h )
-
         cc = costs[0] * 1.0
-
-        # np.savetxt('cmap.txt', cc)
-
-        # cc *= 100.0 / np.max( cc )
         cc *= 100.0 / np.max( cc )
         cc = cc.astype( np.int8 )
         w, h = cc.shape
         c = np.reshape( cc, w * h )
-
-        # np.savetxt('cmap.txt', cc)
 
         ocg = OccupancyGrid()
         ocg.header.stamp = rospy.Time.now()
@@ -164,13 +151,12 @@ class MomoROS(object):
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
         # rospy.loginfo('cost size %d %d %d' % (costs.shape))
-        # costs[:, :, :] = 1.0
 
         # bring in obstacles
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
-                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
+                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 80.0
 
         # Plan
         current = self.convert.from_world2(robot)
