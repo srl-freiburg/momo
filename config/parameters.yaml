@@ -24,4 +24,4 @@ irl_features:
     move_robot: 100.0
 
     # flag for teleoperation mode
-    teleop_state: 0.0
+    teleop_state: 1.0
