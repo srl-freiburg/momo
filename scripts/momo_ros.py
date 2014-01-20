@@ -144,13 +144,34 @@ class MomoROS(object):
         self.compute_costs = momo.features.compute_costs(self.convert)
         self.planner = momo.planning.dijkstra()
 
+    def feature_at_cell(self, features, cell):
+        """ Raw binary feature in each direction at a particular cell """
+        return features[:, cell[0], cell[1], :]
+
+    def cost_at_cell(self, costs, cell):
+        """ Cost in each direction at a particular cell """
+        return costs[:, cell[0], cell[1]]
+
+
+    def evaluate_feature(self, feature, eval_fun):
+        """ Evaluate a raw feature based on some function
+            and can be used for feature selection
+        """
+        pass
+
     def plan(self, weights, feature_type, feature_params,
              x1, y1, x2, y2, cell_size, robot, other, goal, speed):
 
         # Compute features and costs
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
-        # rospy.loginfo('cost size %d %d %d' % (costs.shape))
+    
+        fc = self.feature_at_cell(f, (int(robot[0]), int(robot[1])))
+        rospy.loginfo('Feature at cell %s' % (list(np.reshape(fc, [1, 96])) ))
+
+    
+        # sys.stdout.write(str(list(np.reshape(fc, [1, 96]))))
+        # rospy.loginfo('Computed feature  size %d %d %d %d' % (f.shape))
 
         # bring in obstacles
         if self.OBSTACLES is not None:
@@ -240,7 +261,7 @@ class MomoROS(object):
 
 def run(args):
     rospy.init_node('irl_features')
-    m = MomoROS()
+    MomoROS()
 
     # start up
     try:
