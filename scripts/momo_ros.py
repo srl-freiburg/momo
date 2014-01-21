@@ -166,8 +166,8 @@ class MomoROS(object):
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
     
-        fc = self.feature_at_cell(f, (int(robot[0]), int(robot[1])))
-        rospy.loginfo('Feature at cell %s' % (list(np.reshape(fc, [1, 96])) ))
+        # fc = self.feature_at_cell(f, (int(robot[0]), int(robot[1])))
+        # rospy.loginfo('Feature at cell %s' % (list(np.reshape(fc, [1, 96])) ))
 
     
         # sys.stdout.write(str(list(np.reshape(fc, [1, 96]))))
