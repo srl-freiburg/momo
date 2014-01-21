@@ -177,7 +177,7 @@ class MomoROS(object):
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
-                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 80.0
+                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 180.0
 
         # Plan
         current = self.convert.from_world2(robot)
