@@ -35,10 +35,10 @@ void computeFeature(
     float cosPhi2 = dot( -n, normalize( otherV ) );  
     float force1 = ( 1 + cosPhi1 ) * exp( 2 * radius - xLen ) * vLen;
     float force2 = ( lambda + 0.5 * ( 1 - lambda ) * ( 1 + cosPhi2 ) ) * exp( 2 * radius - xLen );
-    /*feature[0] += force1;*/
-    /*feature[1] += force2;*/
-    feature[0] += otherX.x;
-    feature[1] += otherX.y;
+    feature[0] += force1;
+    feature[1] += force2;
+    /*feature[0] += otherX.x;*/
+    /*feature[1] += otherX.y;*/
   }
 }
 

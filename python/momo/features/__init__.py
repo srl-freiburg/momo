@@ -8,3 +8,4 @@ import icra14
 import icra14_default
 import kimlike
 import kimlike_default
+import test
