@@ -68,7 +68,6 @@ def publish_path( plan ):
 def publish_costmap( costs, cell_size ):
   #cc = np.sum( costs, axis=0 )
   cc = costs[0] * 1.0
-  rospy.loginfo("CC Shape: %d, %d", cc.shape[0], cc.shape[1])
   cc *= 100.0 / np.max( cc )
   cc = cc.astype( np.int8 )
   w, h = cc.shape
@@ -97,10 +96,10 @@ def plan( weights, feature_type, feature_params, x1, y1, x2, y2, cell_size, robo
   costs = compute_costs( f, weights )
 
   # bring in obstacles
-  global OBSTACLES
-  if OBSTACLES is not None:
-    for obs in OBSTACLES:
-      costs[:, obs[1] / cell_size, obs[0] / cell_size] = 50
+  #global OBSTACLES
+  #if OBSTACLES is not None:
+    #for obs in OBSTACLES:
+      #costs[:, obs[1] / cell_size, obs[0] / cell_size] = 50
 
   # Plan
   current = convert.from_world2( robot )
