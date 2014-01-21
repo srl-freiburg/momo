@@ -2,9 +2,14 @@
 irl_features:
     max_msg_age: 0.1
     target_id: 1
-    feature_type: "helbing"
-    feature_params: "{'radius': 3}"
-    weights: "[0.1, 0.2, 0.3, 0.4]"
+    
+    # feature_type: "helbing"
+    # feature_params: "{'radius': 3}"
+    # weights: "[0.1, 0.2, 0.3, 0.4]"
+
+    feature_type: "anisotropic"
+    feature_params: "{'radius': 13}"
+    weights: "[0.3, 0.7]"
 
     # feature_type: "icra14"
     # feature_params: "{'radius': 10}"
@@ -17,7 +22,7 @@ irl_features:
     y2: 70.0
 
     goal: "[68.0, 52.0, 1.0, 0.0]"
-    speed: 0.8
+    speed: 1.0
     goal_threshold: 1.0
 
     # flag for the robot to start moving (enabled after wait)
