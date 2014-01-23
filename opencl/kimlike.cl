@@ -1,5 +1,19 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 
+float __constant densities[3] = { 0.0, 2.0, 5.0 };
+float __constant speeds[3] = { 0.0, 0.015, 0.025 };
+float __constant angles[3] = { -1, -0.7071067811865475, 0.7071067811865475 };
+float2 __constant directions[8] = {
+  (float2) (  1.0f,  0.0f ), 
+  (float2) (  1.0f,  1.0f ), 
+  (float2) (  0.0f,  1.0f ), 
+  (float2) ( -1.0f,  1.0f ), 
+  (float2) ( -1.0f,  0.0f ), 
+  (float2) ( -1.0f, -1.0f ), 
+  (float2) (  0.0f, -1.0f ), 
+  (float2) (  1.0f, -1.0f )
+};
+
 uint maxIdx( float value, __constant float * reference, uint length )
 {
   uint result = 0;
@@ -14,7 +28,6 @@ uint maxIdx( float value, __constant float * reference, uint length )
 void computeFeature( 
   float2 position, float2 velocity, float radius,
   uint frameSize, __constant float4 * frame, 
-  __constant float * densities, __constant float * speeds, __constant float * angles,
   float * feature 
 ) {
   int density = 0;
@@ -53,10 +66,8 @@ void computeFeature(
 
 __kernel void computeFeatures( 
   float speed, float delta, float radius, 
-  __constant float2 * directions,
   uint width, uint height, uint featureLength,
   uint frameSize, __constant float4 * frame, 
-  __constant float * densities, __constant float * speeds, __constant float * angles,
   __global float * features
 ) {
   unsigned int direction = get_global_id( 0 );
@@ -68,7 +79,7 @@ __kernel void computeFeatures(
   float2 position = (float2)( column * delta, row * delta );
   float f[9];
   
-  computeFeature( position, velocity, radius, frameSize, frame, densities, speeds, angles, f );
+  computeFeature( position, velocity, radius, frameSize, frame, f );
 
   int base =  direction * width * height * featureLength 
             + row * width * featureLength
