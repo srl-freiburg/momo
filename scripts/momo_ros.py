@@ -103,8 +103,14 @@ class MomoROS(object):
 
     def publish_costmap(self, costs, cell_size):
         cc = costs[0] * 1.0
-        cc *= 100.0 / np.max( cc )
+        cc *= 1000.0 / np.max( cc )
         cc = cc.astype( np.int8 )
+
+        # if self.OBSTACLES is not None:
+        #     for obs in self.OBSTACLES:
+        #         # costs[:, obs[1], obs[0]] = 50
+        #         cc[obs[1] / cell_size, obs[0] / cell_size] = 1.0
+
         w, h = cc.shape
         c = np.reshape( cc, w * h )
 
@@ -165,6 +171,8 @@ class MomoROS(object):
         # Compute features and costs
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
+        # viscosts = self.compute_costs(f, weights)
+        viscosts = costs.copy()
     
         # fc = self.feature_at_cell(f, (int(robot[0]), int(robot[1])))
         # rospy.loginfo('Feature at cell %s' % (list(np.reshape(fc, [1, 96])) ))
@@ -177,7 +185,8 @@ class MomoROS(object):
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
-                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 180.0
+                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 100.0
+                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
 
         # Plan
         current = self.convert.from_world2(robot)
@@ -208,7 +217,7 @@ class MomoROS(object):
             interpolated_path.append(current * 1.0)
 
         self.publish_path(world_path)
-        self.publish_costmap(costs, cell_size)
+        self.publish_costmap(viscosts, cell_size)
         self.publish_goal_status()
 
         return interpolated_path
