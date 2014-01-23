@@ -1,5 +1,16 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 
+float2 __constant directions[8] = {
+  (float2) (  1.0f,  0.0f ), 
+  (float2) (  1.0f,  1.0f ), 
+  (float2) (  0.0f,  1.0f ), 
+  (float2) ( -1.0f,  1.0f ), 
+  (float2) ( -1.0f,  0.0f ), 
+  (float2) ( -1.0f, -1.0f ), 
+  (float2) (  0.0f, -1.0f ), 
+  (float2) (  1.0f, -1.0f )
+};
+
 uint maxIdx( float value, __constant float * reference, uint length )
 {
   uint result = -1;
@@ -17,7 +28,7 @@ void computeFeature(
   float lambda,
   float * feature 
 ) {
-  for ( int i = 0; i < 2; i++ ) {
+  for ( int i = 0; i < 3; i++ ) {
     feature[i] = 0.;
   }
   for ( int i = 0; i < frameSize; i++ ) {
@@ -40,11 +51,11 @@ void computeFeature(
     /*feature[0] += otherX.x;*/
     /*feature[1] += otherX.y;*/
   }
+  feature[2] = 1;
 }
 
 __kernel void computeFeatures( 
   float speed, float delta, float radius, 
-  __constant float2 * directions,
   uint width, uint height, uint featureLength,
   uint frameSize, __constant float4 * frame, 
   float lambda,
@@ -57,7 +68,7 @@ __kernel void computeFeatures(
   float2 dir      = normalize( directions[direction] );
   float2 velocity = dir * speed; 
   float2 position = (float2)( column * delta, row * delta );
-  float f[2];
+  float f[3];
   
   computeFeature( position, velocity, radius, frameSize, frame, lambda, f );
 
