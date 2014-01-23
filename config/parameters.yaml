@@ -18,10 +18,11 @@ irl_features:
     cell_size: 1.0
     x1: 0.0
     y1: 0.0
-    x2: 160.0
-    y2: 60.0
+    x2: 130.0
+    y2: 130.0
 
-    goal: "[115.0, 15.0, 1.0, 0.0]"
+    # goal: "[115.0, 15.0, 1.0, 0.0]"
+    goal: "[55.0, 110.0, 1.0, 0.0]"
     speed: 1.0
     goal_threshold: 1.0
 
@@ -29,4 +30,4 @@ irl_features:
     move_robot: 100.0
 
     # flag for teleoperation mode
-    teleop_state: 0.0
+    teleop_state: 1.0
