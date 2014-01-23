@@ -198,8 +198,8 @@ def obstacle_callback( data ):
 def listener():
   rospy.init_node( 'irl_features' )
   p = get_params()
-  rospy.Subscriber( "AllAgentsStatus", AllAgentsState, callback )
-  rospy.Subscriber( "static_obstacles", GridCells, obstacle_callback )
+  rospy.Subscriber( "AllAgentsStatus", AllAgentsState, callback, queue_size=1 )
+  rospy.Subscriber( "static_obstacles", GridCells, obstacle_callback ,queue_size=1)
   rospy.spin()
 
 

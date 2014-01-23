@@ -82,8 +82,8 @@ class MomoROS(object):
         self.pub_agent_state = rospy.Publisher('robot_state', AgentState)
 
         # subscribers
-        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status)
-        rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles)
+        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status, queue_size=1)
+        rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles, queue_size=1)
 
 
     def publish_path(self, plan):
@@ -238,6 +238,10 @@ class MomoROS(object):
             parms.x1, parms.y1, parms.x2, parms.y2, parms.cell_size,
             robot, other, parms.goal, parms.speed
         )
+
+        # f = self.compute_features(parms.speed, other)
+        # costs = self.compute_costs(f, parms.weights)
+        # self.publish_costmap(costs, parms.cell_size)
 
         distance = 0.0
         if len(path) > self.LOOKAHEAD:
