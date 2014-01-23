@@ -13,9 +13,6 @@ class compute_features( momo.opencl.Program ):
     self.convert = convert
     self.radius  = radius
 
-    mf = cl.mem_flags
-    self.direction_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = DIRECTIONS )
-
   def __call__( self, speed, frame ):
     mf = cl.mem_flags
     features = np.zeros( (8, self.convert.grid_height, self.convert.grid_width, FEATURE_LENGTH ), dtype=np.float32 )
@@ -26,7 +23,6 @@ class compute_features( momo.opencl.Program ):
     self.kimlike.computeFeatures( 
       self.queue, features.shape[:-1], None, 
       np.float32( speed ), np.float32( self.convert.delta ), np.float32( self.radius ),
-      self.direction_buffer,
       np.int32( self.convert.grid_width ), np.int32( self.convert.grid_height ), np.int32( FEATURE_LENGTH ),
       np.int32( frame.shape[0] ), frame_buffer, 
       np.float32( LAMBDA ),
