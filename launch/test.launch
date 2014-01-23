@@ -12,9 +12,13 @@
   <param name="/irl_features/feature_params" value="{ 'radius': 3}"/>
   <param name="/irl_features/weights" value="[0.1, 0.2, 0.3, 0.4]"/>-->
 
-  <param name="/irl_features/feature_type" value="anisotropic"/>
+  <!--<param name="/irl_features/feature_type" value="anisotropic"/>
   <param name="/irl_features/feature_params" value="{ 'radius': 13}"/>
-  <param name="/irl_features/weights" value="[0.3, 0.7]"/>
+  <param name="/irl_features/weights" value="[0.3, 0.7]"/>-->
+
+  <param name="/irl_features/feature_type" value="icra14"/>
+  <param name="/irl_features/feature_params" value="{ 'radius': 3}"/>
+  <param name="/irl_features/weights" value="[0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.03, 0.03, 0.04]"/>
 
   <!-- grid dimension -->
   <param name="/irl_features/cell_size" value="1.0" type="double"/>
