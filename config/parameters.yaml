@@ -3,16 +3,16 @@ irl_features:
     max_msg_age: 0.1
     target_id: 1
 
-    feature_type: "helbing"
-    feature_params: "{'radius': 3}"
-    weights: "[0.1, 0.2, 0.3, 0.4]"
+    # feature_type: "helbing"
+    # feature_params: "{'radius': 3}"
+    # weights: "[0.1, 0.2, 0.3, 0.4]"
 
     # feature_type: "anisotropic"
     # feature_params: "{'radius': 13}"
     # weights: "[0.3, 0.7]"
 
     # feature_type: "icra14"
-    # feature_params: "{'radius': 7}"
+    # feature_params: "{'radius': 5}"
     # weights: "[0.1, 0.5, 0.9, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9]"
     # weights: "[0.1, 0.5, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
     # weights: "[0.0, 0.0, 0.0, 0.1, 0.5, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
@@ -20,22 +20,37 @@ irl_features:
 
     feature_type: "kimlike"
     feature_params: "{'radius': 7}"
-    weights: "[0.9, 0.5, 0.1, 0.9, 0.5, 0.1, 0.9, 0.5, 0.1, 0.9]"
+    # weights: "[0.9, 0.5, 0.1, 0.9, 0.5, 0.1, 0.9, 0.5, 0.1, 1.0]"
+    # weights: "[0.9, 0.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]"
+    # weights: "[0.0, 0.0, 0.0, 0.7, 0.2, 0.1, 0.0, 0.0, 0.0, 1.0]"
+    weights: "[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 0.2, 0.1, 1.0]"
 
-    cell_size: 1.0
+    # Scene 3
+    # goal: "[55.0, 110.0, 0.0, 0.0]"
+    # x1: 0.0
+    # y1: 0.0
+    # x2: 130.0
+    # y2: 130.0
+
+    # scene 2
+    # goal: "[115.0, 15.0, 1.0, 0.0]"
+    # x1: 0.0
+    # y1: 0.0
+    # x2: 130.0
+    # y2: 40.0
+
+    # scene 1
+    goal: "[120.0, 40.0, 1.0, 0.0]"
     x1: 0.0
     y1: 0.0
-    x2: 130.0
-    y2: 130.0
+    x2: 160.0
+    y2: 80.0
 
-    # goal: "[115.0, 15.0, 1.0, 0.0]"
-    goal: "[55.0, 110.0, 0.0, 0.0]"
-    # goal: "[120.0, 40.0, 1.0, 0.0]"
+    cell_size: 1.0
     speed: 1.0
-    goal_threshold: 1.0
+    goal_threshold: 1.5
 
     # flag for the robot to start moving (enabled after wait)
     move_robot: 100.0
-
     # flag for teleoperation mode
-    teleop_state: 1.0
+    teleop_state: 0.0

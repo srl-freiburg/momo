@@ -1,6 +1,6 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene3.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene1.xml" type="string"/>
   <rosparam command="load" file="$(find momo)/config/parameters.yaml" />
 
   <!-- main simulator node -->
