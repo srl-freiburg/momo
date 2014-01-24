@@ -1,15 +1,15 @@
 # irl feature parameters
 irl_features:
-    max_msg_age: 0.1
-    target_id: 1
+    max_msg_age: 0.05
+    target_type: 2
 
     # feature_type: "helbing"
     # feature_params: "{'radius': 3}"
     # weights: "[0.1, 0.2, 0.3, 0.4]"
 
     # feature_type: "anisotropic"
-    # feature_params: "{'radius': 13}"
-    # weights: "[0.3, 0.7]"
+    # feature_params: "{'radius': 3}"
+    # weights: "[0.3, 0.6, 0.1]"
 
     # feature_type: "icra14"
     # feature_params: "{'radius': 5}"
@@ -40,7 +40,7 @@ irl_features:
     # y2: 40.0
 
     # scene 1
-    goal: "[120.0, 40.0, 1.0, 0.0]"
+    goal: "[120.0, 40.0, 0.0, 0.0]"
     x1: 0.0
     y1: 0.0
     x2: 160.0

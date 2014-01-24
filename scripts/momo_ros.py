@@ -37,7 +37,7 @@ def param(name, default=None):
 
 def get_params():
     result = Params()
-    result.target_id = param("target_id")
+    result.target_type = param("target_type")
     result.feature_type = param("feature_type")
     result.feature_params = ast.literal_eval(param("feature_params"))
     result.weights = np.array(
@@ -129,9 +129,9 @@ class MomoROS(object):
         else:
             self.pub_goal_status.publish('Travelling')
 
-    def publish_robot_state(self, target_id, x, y, vx, vy):
+    def publish_robot_state(self, target_type, x, y, vx, vy):
         a = AgentState()
-        a.id = target_id
+        a.type = target_type
         a.position.x = x
         a.position.y = y
         a.velocity.x = vx
@@ -171,21 +171,13 @@ class MomoROS(object):
         # Compute features and costs
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
-        # viscosts = self.compute_costs(f, weights)
         viscosts = costs.copy()
-    
-        # fc = self.feature_at_cell(f, (int(robot[0]), int(robot[1])))
-        # rospy.loginfo('Feature at cell %s' % (list(np.reshape(fc, [1, 96])) ))
-
-    
-        # sys.stdout.write(str(list(np.reshape(fc, [1, 96]))))
-        # rospy.loginfo('Computed feature  size %d %d %d %d' % (f.shape))
 
         # bring in obstacles
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
-                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 100.0
+                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000.0
                 viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
 
         # Plan
@@ -236,7 +228,7 @@ class MomoROS(object):
                  a.velocity.x, a.velocity.y],
                 dtype=np.float64)
             # TODO - change to agent type
-            if a.id == parms.target_id:
+            if a.type == parms.target_type:
                 robot = v
             else:
                 other.append(v)
@@ -257,11 +249,11 @@ class MomoROS(object):
             distance = np.linalg.norm(robot[:2] - parms.goal[:2])
 
         if distance > parms.goal_threshold:
-            self.publish_robot_state(parms.target_id, robot[0], robot[1],
+            self.publish_robot_state(parms.target_type, robot[0], robot[1],
                 path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
         else:
             self.GOAL_REACHED = True
-            self.publish_robot_state(parms.target_id, 0, 0, 0, 0)
+            self.publish_robot_state(parms.target_type, 0, 0, 0, 0)
 
     def callback_obstacles(self, data):
         self.OBSTACLES = []
