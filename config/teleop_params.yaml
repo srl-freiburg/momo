@@ -1,0 +1,34 @@
+# irl feature parameters
+irl_features:
+    # scene 1
+    goal: "[120.0, 40.0, 0.0, 0.0]"
+    x1: 0.0
+    y1: 0.0
+    x2: 160.0
+    y2: 80.0
+
+    # scene 2
+    # goal: "[115.0, 15.0, 1.0, 0.0]"
+    # x1: 0.0
+    # y1: 0.0
+    # x2: 130.0
+    # y2: 40.0
+
+    # Scene 3
+    # goal: "[55.0, 110.0, 0.0, 0.0]"
+    # x1: 0.0
+    # y1: 0.0
+    # x2: 130.0
+    # y2: 130.0
+
+    # additional parameters
+    max_msg_age: 0.01
+    target_type: 2
+    cell_size: 1.0
+    speed: 1.0
+    goal_threshold: 3.0
+
+    # flag for the robot to start moving (enabled after wait)
+    move_robot: 100.0
+    # flag for teleoperation mode
+    teleop_state: 1.0
