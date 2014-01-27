@@ -3,7 +3,7 @@
 
   <!--  PARAMETERS -->
   <!-- scene file -->
-  <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene1.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene2.xml" type="string"/>
   
   <!-- grid related parameters -->
   <param name="/irl_features/goal" value="[115.0, 15.0, 1.0, 0.0]"/>
