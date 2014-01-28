@@ -44,13 +44,13 @@ irl_features:
     # y2: 130.0
 
     # additional parameters
-    max_msg_age: 0.01
+    max_msg_age: 0.1
     target_type: 2
     cell_size: 1.0
     speed: 1.0
     goal_threshold: 3.0
 
     # flag for the robot to start moving (enabled after wait)
-    move_robot: 1000.0
+    move_robot: 100.0
     # flag for teleoperation mode
     teleop_state: 0.0
