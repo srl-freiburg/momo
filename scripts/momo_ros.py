@@ -82,7 +82,7 @@ class MomoROS(object):
         self.pub_agent_state = rospy.Publisher('robot_state', AgentState)
 
         # subscribers
-        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status, queue_size=1)
+        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status)
         rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles, queue_size=1)
 
 
@@ -105,12 +105,6 @@ class MomoROS(object):
         cc = costs[0] * 1.0
         cc *= 1000.0 / np.max( cc )
         cc = cc.astype( np.int8 )
-
-        # if self.OBSTACLES is not None:
-        #     for obs in self.OBSTACLES:
-        #         # costs[:, obs[1], obs[0]] = 50
-        #         cc[obs[1] / cell_size, obs[0] / cell_size] = 1.0
-
         w, h = cc.shape
         c = np.reshape( cc, w * h )
 
@@ -169,6 +163,19 @@ class MomoROS(object):
     def plan(self, weights, feature_type, feature_params,
              x1, y1, x2, y2, cell_size, robot, other, goal, speed):
 
+        # self.params = get_params()
+        # self._build_compute_objects(
+        #     self.params.feature_type,
+        #     self.params.feature_params,
+        #     self.params.x1,
+        #     self.params.x2,
+        #     self.params.y1,
+        #     self.params.y2,
+        #     self.params.cell_size
+        # )
+
+        # rospy.loginfo('Planning...')
+
         # Compute features and costs
         f = self.compute_features(speed, other)
         costs = self.compute_costs(f, weights)
@@ -178,7 +185,7 @@ class MomoROS(object):
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
-                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000.0
+                costs[:, obs[1] / cell_size, obs[0] / cell_size] = 10000.0
                 viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
 
         # Plan
@@ -216,8 +223,10 @@ class MomoROS(object):
         return interpolated_path
 
     def callback_agent_status(self, data):
-        parms = get_params()
-        if rospy.get_rostime().to_sec() - data.header.stamp.to_sec() > parms.max_msg_age:
+        # self.params = get_params()
+        travel_time = rospy.get_rostime().to_sec() - data.header.stamp.to_sec()
+        if travel_time > self.params.max_msg_age:
+            rospy.loginfo('Skipping data which (%f)s late' % (travel_time))
             return
 
         other = []
@@ -229,32 +238,32 @@ class MomoROS(object):
                  a.velocity.x, a.velocity.y],
                 dtype=np.float64)
             # TODO - change to agent type
-            if a.type == parms.target_type:
+            if a.type == self.params.target_type:
                 robot = v
             else:
                 other.append(v)
         other = np.array(other)
 
         path = self.plan(
-            parms.weights, parms.feature_type, parms.feature_params,
-            parms.x1, parms.y1, parms.x2, parms.y2, parms.cell_size,
-            robot, other, parms.goal, parms.speed
+            self.params.weights, self.params.feature_type, self.params.feature_params,
+            self.params.x1, self.params.y1, self.params.x2, self.params.y2, self.params.cell_size,
+            robot, other, self.params.goal, self.params.speed
         )
 
-        # f = self.compute_features(parms.speed, other)
-        # costs = self.compute_costs(f, parms.weights)
-        # self.publish_costmap(costs, parms.cell_size)
+        # f = self.compute_features(self.params.speed, other)
+        # costs = self.compute_costs(f, self.params.weights)
+        # self.publish_costmap(costs, self.params.cell_size)
 
         distance = 0.0
         if len(path) > self.LOOKAHEAD:
-            distance = np.linalg.norm(robot[:2] - parms.goal[:2])
+            distance = np.linalg.norm(robot[:2] - self.params.goal[:2])
 
-        if distance > parms.goal_threshold:
-            self.publish_robot_state(parms.target_type, robot[0], robot[1],
+        if distance > self.params.goal_threshold:
+            self.publish_robot_state(self.params.target_type, robot[0], robot[1],
                 path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
         else:
             self.GOAL_REACHED = True
-            self.publish_robot_state(parms.target_type, 0, 0, 0, 0)
+            self.publish_robot_state(self.params.target_type, robot[0], robot[1], 0, 0)
 
     def callback_obstacles(self, data):
         self.OBSTACLES = []

@@ -1,26 +1,26 @@
 # irl feature parameters
 irl_features:
-    # feature_type: "helbing"
-    # feature_params: "{'radius': 3}"
-    # weights: "[0.1, 0.2, 0.3, 0.4]"
+    feature_type: "helbing"
+    feature_params: "{'radius': 4}"
+    weights: "[0.5, 0.3, 0.1, 0.0]"
 
     # feature_type: "anisotropic"
     # feature_params: "{'radius': 3}"
-    # weights: "[0.3, 0.6, 0.1]"
+    # weights: "[1.0, 0.0, 1.0]"
 
     # feature_type: "icra14"
-    # feature_params: "{'radius': 5}"
-    # weights: "[0.1, 0.5, 0.9, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9]"
-    # weights: "[0.1, 0.5, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
-    # weights: "[0.0, 0.0, 0.0, 0.1, 0.5, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
-    # weights: "[0.0, 0.0, 0.0, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9, 0.1, 0.5, 0.9]"
+    # feature_params: "{'radius': 6}"
+    # weights: "[0.1, 0.05, 0.01, 0.5, 0.3, 0.2, 0.7, 0.2, 0.1, 0.3, 0.2, 0.1]"
+    # weights: "[0.1, 0.05, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+    # weights: "[0.0, 0.0, 0.0, 0.5, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+    # weights: "[0.0, 0.0, 0.0, 0.5, 0.3, 0.2, 0.7, 0.2, 0.1, 0.3, 0.2, 0.1]"
 
-    feature_type: "kimlike"
-    feature_params: "{'radius': 7}"
-    weights: "[0.7, 0.2, 0.1, 0.7, 0.2, 0.1, 0.7, 0.2, 0.1, 1.0]"
-    # weights: "[0.7, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]"
+    # feature_type: "kimlike"
+    # feature_params: "{'radius': 7}"
+    # weights: "[0.6, 0.3, 0.1, 0.7, 0.2, 0.1, 0.8, 0.2, 0.05, 1.0]"
+    # weights: "[0.6, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]"
     # weights: "[0.0, 0.0, 0.0, 0.7, 0.2, 0.1, 0.0, 0.0, 0.0, 1.0]"
-    # weights: "[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 0.2, 0.1, 1.0]"
+    # weights: "[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 0.2, 0.05, 1.0]"
 
     # # scene 1
     goal: "[120.0, 40.0, 0.0, 0.0]"
@@ -44,11 +44,11 @@ irl_features:
     # y2: 130.0
 
     # additional parameters
-    max_msg_age: 0.1
+    max_msg_age: 0.3
     target_type: 2
     cell_size: 1.0
     speed: 1.0
-    goal_threshold: 3.0
+    goal_threshold: 2.0
 
     # flag for the robot to start moving (enabled after wait)
     move_robot: 100.0
