@@ -37,6 +37,7 @@ def compute_feature( reference, frame, radius = 3 ):
 
     angle = sum_ang / density
     feature[dir_i + max_idx( angle, ANGLES )] = 1
+  feature[9] = 1.0
     
   return feature
 

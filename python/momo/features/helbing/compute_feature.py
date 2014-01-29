@@ -25,6 +25,7 @@ def compute_feature( reference, frame, radius = 3 ):
     i = max_idx( force, ANGLES )
     if force > 0.5:
       feature[max( i, 0 )] += 1
+  feature[3] = 1.0
   return feature
 
 

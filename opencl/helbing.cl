@@ -1,5 +1,6 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 
+#define FEATURE_LENGTH 4
 float __constant angles[3] = { -1, -0.7071067811865475, 0.7071067811865475 };
 float2 __constant directions[8] = {
   (float2) (  1.0f,  0.0f ), 
@@ -30,7 +31,7 @@ void computeFeature(
   float lambda,
   float * feature 
 ) {
-  for ( int i = 0; i < 4; i++ ) {
+  for ( int i = 0; i < FEATURE_LENGTH; i++ ) {
     feature[i] = 0.;
   }
   for ( int i = 0; i < frameSize; i++ ) {
@@ -53,7 +54,7 @@ void computeFeature(
 
 __kernel void computeFeatures( 
   float speed, float delta, float radius, 
-  uint width, uint height, uint featureLength,
+  uint width, uint height,
   uint frameSize, __constant float4 * frame, 
   float lambda,
   __global float * features
@@ -65,15 +66,15 @@ __kernel void computeFeatures(
   float2 dir      = normalize( directions[direction] );
   float2 velocity = dir * speed; 
   float2 position = (float2)( column * delta, row * delta );
-  float f[4];
+  float f[FEATURE_LENGTH];
   
   computeFeature( position, velocity, radius, frameSize, frame, lambda, f );
 
-  int base =  direction * width * height * featureLength 
-            + row * width * featureLength
-            + column * featureLength;
+  int base =  direction * width * height * FEATURE_LENGTH 
+            + row * width * FEATURE_LENGTH
+            + column * FEATURE_LENGTH;
              
-  for ( int i = 0; i < featureLength; i++ ) {
+  for ( int i = 0; i < FEATURE_LENGTH; i++ ) {
     features[base + i] = f[i];
   }
 }

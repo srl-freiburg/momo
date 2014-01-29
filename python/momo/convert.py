@@ -90,7 +90,7 @@ class convert( object ):
     k = random.randint( 0, 7 )
     return np.array( [x, y, k], dtype = np.int32 )
     
-  def preprocess_data( self, data ):
+  def preprocess_data( self, data, ids = [] ):
     frame_data = {}
     for frame in momo.frames( data ):
       tmp = []
@@ -99,18 +99,19 @@ class convert( object ):
 
       for i in xrange( len( tmp ) ):
         o_id, o_time, o_frame, o = tmp.pop( 0 )
-        if not o_id in frame_data:
-          frame_data[o_id] = {
-            "times": [],
-            "frame_nums": [],
-            "states": [], 
-            "frames": []
-          }
-        frame_data[o_id]["states"].append( o )
-        frame_data[o_id]["frames"].append( [f[3] for f in tmp] )
-        frame_data[o_id]["times"].append( o_time )
-        frame_data[o_id]["frame_nums"].append( o_frame )
-        tmp.append( [o_id, o_time, o_frame, o] )
+        if o_id in ids or len( ids ) == 0:
+          if not o_id in frame_data:
+            frame_data[o_id] = {
+              "times": [],
+              "frame_nums": [],
+              "states": [], 
+              "frames": []
+            }
+          frame_data[o_id]["states"].append( o )
+          frame_data[o_id]["frames"].append( [f[3] for f in tmp] )
+          frame_data[o_id]["times"].append( o_time )
+          frame_data[o_id]["frame_nums"].append( o_frame )
+          tmp.append( [o_id, o_time, o_frame, o] )
 
     # Rasterize to grid
     for o_id, frame in frame_data.items():
