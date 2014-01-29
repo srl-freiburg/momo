@@ -4,8 +4,8 @@
   <!--  PARAMETERS -->
   <!-- scene file -->
   <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene2.xml" type="string"/>
-  <param name="/irl_features/update_type" value="local" type="string"/>
-  <param name="/irl_features/sensor_range" value="15.0" type="double"/>
+  <param name="/irl_features/update_type" value="oracle" type="string"/>
+  <param name="/irl_features/sensor_range" value="30.0" type="double"/>
   
   <!-- grid related parameters -->
   <param name="/irl_features/goal" value="[115.0, 15.0, 1.0, 0.0]"/>
