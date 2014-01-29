@@ -1,0 +1,125 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
+import os
+
+BASE_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), ".." ) )
+path     = os.path.abspath( os.path.join( BASE_DIR, "python" ) )
+sys.path.append( path )
+
+import time
+import momo
+import momo.planning
+import numpy as np
+import matplotlib.pylab as pl
+import scipy.ndimage as ni
+
+class default_noise( object ):
+  def __init__( self, factor ):
+    self.factor = factor
+  def __call__( self, delta ):
+    d3 = delta**3 * self.factor / 3.
+    d2 = delta**2 * self.factor / 2.
+    d  = delta * self.factor
+    return np.array( [
+      [d3, 0., d2, 0.],
+      [0., d3, 0., d2],
+      [d2, 0.,  d,  0],
+      [0,  d2,  0,  d]
+    ] )
+
+class Track( object ):
+  a = np.array( [
+    [ 1., 0., 1., 0. ],
+    [ 0., 1., 0., 1. ],
+    [ 0., 0., 1., 0. ],
+    [ 0., 0., 0., 1. ]
+  ] )
+  c = np.array( [
+    [ 1., 0., 0., 0. ],
+    [ 0., 1., 0., 0. ]
+  ] )
+  r = default_noise( 0.0002 )
+  q = np.eye( 2 ) * 0.25
+  p = np.eye( 4 ) * 1.
+
+  def __init__( self, observation ):
+    mean = np.array( [0.] * 4 )
+    mean[0:2] = observation
+    self.filter = momo.tracking.Kalman( 
+      mean, Track.a, Track.c, Track.r, Track.q, Track.p 
+    )
+
+  def predict( self, delta ):
+    self.filter.predict( delta )
+
+  def update( self, observation ):
+    self.filter.update( observation )
+
+  def get_mean( self ):
+    return self.filter.mean
+
+  def set_mean( self, value ):
+    self.filter.mean = value
+
+  mean = property( get_mean, set_mean )
+
+def split_line( line ):
+  v = line.split()[:5]
+  return [
+    int( int( v[0] ) ), float( v[2] ), float( v[3] )
+  ]
+
+def read_data( filename ):
+  f = open( filename )
+  data = [split_line( l ) for l in f]
+  f.close()
+  return data
+
+def filter_data( data, period ):
+  result = []
+  tracks = {}
+  old_id = 0
+  delta = period
+  tmp = {}
+  frame = 0
+  timestamp = 0
+  for o in data:
+    o_id, x, y  = o
+    if o_id <= old_id:
+      if old_id > 0:
+        timestamp += delta
+        frame += 1
+      for k, t in tracks.items():
+        t.predict( delta )
+        tmp[k].append( [frame, timestamp, k, 1.0 * t.mean] )
+    if o_id in tracks:
+      tracks[o_id].update( np.array( [x, y] ) )
+      mean = np.array( [1., 1., 1 / delta, 1 / delta] ) * tracks[o_id].mean
+      tmp[o_id][-1] = [frame, timestamp, o_id, mean]
+    else:
+      tracks[o_id] = Track( np.array( [x, y] ) )
+      tmp[o_id] = [[frame, timestamp, o_id, tracks[o_id].mean]]
+    result.extend( tmp[o_id] )
+    tmp[o_id] = []
+    old_id = o_id
+
+  return result
+
+
+root = sys.argv[1]
+period = 1.0 / float( sys.argv[3] )
+
+if not os.path.exists( os.path.join( root, "filtered" ) ):
+  os.makedirs( os.path.join( root, "filtered" ) )
+data = filter_data( read_data( os.path.join( root, "tracks", "%s.txt" ) % sys.argv[2] ), period )
+
+data.sort( key = lambda x : x[0]  )
+
+f = open( os.path.join( root, "filtered", "%s.txt" ) % sys.argv[2], "w" )
+for d in data:
+  f.write( "%i %f %i %f %f %f %f\n" % ( d[0], d[1], d[2], d[3][0], d[3][1], d[3][2], d[3][3] ) )
+f.close()
+
+

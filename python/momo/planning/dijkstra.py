@@ -73,10 +73,18 @@ class dijkstra( momo.opencl.Program ):
     height = parents.shape[1]
     p1 = start[2] * width * height + start[1] * width + start[0]
     result = []
+    tk = None
+    ty = None
+    tx = None
     while p1 != -1:
       k = p1 / ( height * width )
       y = ( p1 % ( height * width ) ) / width
       x = p1 % width
+      if k == tk and y == ty and x == tx:
+        return None
+      tk = k
+      ty = y
+      tx = x
       result.append( [x, y, k] )
       p1 = parents[k, y, x]
     return np.array( result, dtype = np.int32 )

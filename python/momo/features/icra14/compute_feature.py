@@ -36,6 +36,7 @@ def compute_feature( reference, frame, radius = 3 ):
       if bin_count[angle] > 0:
         l = bin_sum[angle] / bin_count[angle]
         feature[3 + angle * 3 + max_idx( l, SPEEDS )] = 1
+  feature[12] = 1.0
   return feature
 
 

@@ -23,7 +23,7 @@ class compute_features( momo.opencl.Program ):
     self.kimlike.computeFeatures( 
       self.queue, features.shape[:-1], None, 
       np.float32( speed ), np.float32( self.convert.delta ), np.float32( self.radius ),
-      np.int32( self.convert.grid_width ), np.int32( self.convert.grid_height ), np.int32( FEATURE_LENGTH ),
+      np.int32( self.convert.grid_width ), np.int32( self.convert.grid_height ),
       np.int32( frame.shape[0] ), frame_buffer, 
       feature_buffer 
     )

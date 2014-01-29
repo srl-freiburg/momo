@@ -1,5 +1,7 @@
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 
+#define FEATURE_LENGTH 13
+
 float __constant densities[3] = { 0.0, 2.0, 5.0 };
 float __constant speeds[3] = { 0.0, 0.015, 0.025 };
 float __constant angles[3] = { -1, -0.7071067811865475, 0.7071067811865475 };
@@ -34,7 +36,7 @@ void computeFeature(
   int binCount[3] = { 0, 0, 0 };
   float binSum[3] = { 0.0, 0.0, 0.0 };
 
-  for ( int i = 0; i < 12; i++ ) {
+  for ( int i = 0; i < FEATURE_LENGTH; i++ ) {
     feature[i] = 0.;
   }
   for ( int i = 0; i < frameSize; i++ ) {
@@ -63,11 +65,12 @@ void computeFeature(
       }
     }
   }
+  feature[12] = 1.0;
 }
 
 __kernel void computeFeatures( 
   float speed, float delta, float radius, 
-  uint width, uint height, uint featureLength,
+  uint width, uint height,
   uint frameSize, __constant float4 * frame, 
   __global float * features
 ) {
@@ -78,15 +81,15 @@ __kernel void computeFeatures(
   float2 dir      = normalize( directions[direction] );
   float2 velocity = dir * speed; 
   float2 position = (float2)( column * delta, row * delta );
-  float f[12];
+  float f[FEATURE_LENGTH];
   
   computeFeature( position, velocity, radius, frameSize, frame, f );
 
-  int base =  direction * width * height * featureLength 
-            + row * width * featureLength
-            + column * featureLength;
+  int base =  direction * width * height * FEATURE_LENGTH 
+            + row * width * FEATURE_LENGTH
+            + column * FEATURE_LENGTH;
              
-  for ( int i = 0; i < featureLength; i++ ) {
+  for ( int i = 0; i < FEATURE_LENGTH; i++ ) {
     features[base + i] = f[i];
   }
 }
