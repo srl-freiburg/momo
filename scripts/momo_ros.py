@@ -182,7 +182,7 @@ class MomoROS(object):
         
         for i in xrange(int(robot[0])-int(radius), int(robot[0])+int(radius)):
             for j in xrange(int(robot[1])-int(radius), int(robot[1])+int(radius)):
-                if self.within_grid((i, j)) is True and self.distance_between(robot, (i, j)) <= radius:
+                if self.within_grid((i, j)) == True and self.distance_between(robot, (i, j)) < radius:
                     local_cells.append((i, j))
 
         # i, j = robot[0]-radius, robot[1]-radius
@@ -215,7 +215,9 @@ class MomoROS(object):
             # print lc
             if len(lc) > 0:
                 for cell in lc:
+                    # self.costs[:, cell[1], cell[0]] = 1000
                     self.costs[:, cell[1], cell[0]] = temp_costs[:, cell[1], cell[0]]
+                    # self.costs[:, cell[0], cell[1]] = temp_costs[:, cell[0], cell[1]]
 
         # for visualization (different thresholds for obstacles)
         viscosts = self.costs.copy()
