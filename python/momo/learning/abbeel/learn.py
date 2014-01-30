@@ -6,62 +6,75 @@ import cvxopt.solvers
 import cvxopt
 from cvxopt import solvers
 from math import *
+import sys
 
 def learn( feature_module, convert, frame_data, ids, radius, h ):
   feature_length = feature_module.FEATURE_LENGTH
 
 
+  sys.stderr.write( "Initializing weight vector\n" )
   sum_obs = np.zeros( feature_length, np.float64 )
-  for o_id in ids:
-    l = len( frame_data[o_id]["states"] )
-    for i in xrange( max( l - h, 1 ) ):
-      observed  = compute_observed( 
-        feature_module, convert, radius, 
-        frame_data[o_id]["states"][i:], frame_data[o_id]["frames"][i:], 
-        h
-      )
-      sum_obs += observed
+  count = 0.0
+  for fd in frame_data:
+    for o_id in ids:
+      l = len( fd[o_id]["states"] )
+      for i in xrange( max( l - h, 1 ) ):
+        sys.stderr.write( "." )
+        observed  = compute_observed( 
+          feature_module, convert, radius, 
+          fd[o_id]["states"][i:], fd[o_id]["frames"][i:], 
+          h
+        )
+        sum_obs += observed
+        count += h
+  sys.stderr.write( "[OK]\n" )
 
   # Initialize weight vector
-  w  = ( np.ones( feature_length ) * 1.0 / feature_length ).astype( np.float64 )
+  w  = np.ones( feature_length ).astype( np.float64 )
   for i in xrange( feature_length ):
-    w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( np.sum( sum_obs ) + feature_length ) )
+    #w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( count + feature_length ) )
+    #w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( np.sum( sum_obs ) + feature_length ) )
+    w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( count + 2.0 ) )
   w /= np.linalg.norm( w )
+
+  sys.stderr.write( "count: %f\n" % count )
+  sys.stderr.write( "observed:" + str( sum_obs ) + "\n" )
+  sys.stderr.write( "w:" + str( w ) + "\n" )
 
   # Main optimization loop
 
   all_exp = []
   weights = []
   counts  = []
+  sys.stderr.write( "Entering main loop\n" )
   for times in xrange( 2 * feature_length ):
     sum_obs = np.zeros( feature_length, np.float64 )
     sum_exp = np.zeros( feature_length, np.float64 )
 
-    for o_id in ids:
-      l = len( frame_data[o_id]["states"] )
-      for i in xrange( max( l - h, 1 ) ):
-        observed, expected, cummulated, costs, grid_path  = compute_expectations( 
-          feature_module, convert, radius, 
-          frame_data[o_id]["states"][i:], frame_data[o_id]["frames"][i:], 
-          w, h
-        )
-        sum_obs += observed
-        sum_exp += expected
+    for fd in frame_data:
+      for o_id in ids:
+        l = len( fd[o_id]["states"] )
+        for i in xrange( max( l - h, 1 ) ):
+          sys.stderr.write( "." )
+          observed, expected, cummulated, costs = compute_expectations( 
+            feature_module, convert, radius, 
+            fd[o_id]["states"][i:], fd[o_id]["frames"][i:], 
+            w, h
+          )
+          sum_obs += observed
+          sum_exp += expected
+        sys.stderr.write( "\n" )
 
-        #gradient = observed / np.sum( observed[:4] ) - expected / np.sum( expected[:4] )
-        #error = np.linalg.norm( gradient )
-        #momo.plot.gradient_descent_step( cummulated, costs, grid_path, error )
-
-    gradient = sum_obs / np.sum( sum_obs ) - sum_exp / np.sum( sum_exp )
+    gradient = sum_obs - sum_exp
     error = np.linalg.norm( gradient )
-    print "Weights", w
+    print "Result:", w, "Error:", error
     print "Observed %s, Expected %s" % ( sum_obs, sum_exp )
     print "Gradient", gradient
     print times, error
 
-    all_exp.append( sum_exp / np.sum( sum_exp ) )
+    #all_exp.append( sum_exp / np.sum( sum_exp ) )
+    all_exp.append( sum_exp )
     weights.append( w )
-    #counts.append( np.linalg.norm( sum_obs - sum_exp ) )
     counts.append( error )
     w, x = optimize( times, all_exp, sum_obs )
     norm = np.linalg.norm( w )
@@ -86,15 +99,6 @@ def compute_expectations( feature_module, convert, radius, states, frames, w, h 
   compute_costs = feature_module.compute_costs( convert )
   planner = momo.irl.planning.dijkstra( convert, compute_costs )
 
-  #l = len( states )
-  grid_path = [convert.from_world2( s ) for s in states]
-  #repr_path = [convert.to_world2( convert.from_world2( s ), np.linalg.norm( s[2:] ) ) for s in states[:h]]
-  #mu_observed = momo.features.feature_sum( 
-    #feature_module, 
-    #repr_path[:h],
-    #frames[:h],
-    #radius
-  #)
   mu_observed = compute_observed( feature_module, convert, radius, states, frames, h )
 
   velocities = [np.linalg.norm( v[2:] ) for v in states[:h]]
@@ -116,7 +120,7 @@ def compute_expectations( feature_module, convert, radius, states, frames, w, h 
     ], 
     0 
   )
-  return mu_observed, mu_expected, cummulated, costs, grid_path
+  return mu_observed, mu_expected, cummulated, costs
 
 
 def optimize(  j, all_exp, mu_observed ):

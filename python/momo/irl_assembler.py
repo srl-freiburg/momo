@@ -17,9 +17,11 @@ class irl_assembler( object ):
       self.learn( data, ids )
 
   def learn( self, data, ids ):
-    self.convert = momo.convert( data, self.delta )
     sys.stderr.write( "Preprocessing data..." )
-    frame_data = self.__convert.preprocess_data( data, ids )
+    frame_data = []
+    self.convert = momo.convert( reduce( lambda x, y: x + y, data ), self.delta )
+    for d in data:
+      frame_data.append( self.__convert.preprocess_data( d, ids ) )
     sys.stderr.write( "[OK]\n" )
 
     if ids == None or len( ids ) == 0:
