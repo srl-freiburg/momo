@@ -13,5 +13,8 @@ helbing abbeel cnt_prior normalized Result: [ 0.69630872  0.48486378  0.25993291
 helbing abbeel cnt_prior unormalized Result: [ 0.66528     0.44945793  0.46185832  0.376931  ] Error: 2039.13339436
 helbing abbeel cnt_prior1 unormalized Result: [ 0.65227336  0.46456198  0.46217339  0.38094276] Error: 2039.07822312
 
+### This are the final results for the max margin algorithm, please ignore those above
 bin/learn scene1 helbing abbeel 3.0 10 --ids=1 --delta=1.0 [ 0.66005113  0.49142668  0.4914536   0.2851415 ]
 bin/learn scene1 icra14 abbeel 3.0 10 --ids=1 --delta=1.0 [ 0.24251116  0.24229685  0.22492044  0.32688654  0.32688654  0.24322253  0.32688654  0.32688654  0.2433879   0.32688654  0.32688654  0.24326213  0.11485279]
+bin/learn scene1 anisotropic abbeel 3.0 10 --ids=1 --delta=1.0 [  2.63774998e-51   6.22382432e-18   1.00000000e+00]
+bin/learn scene1 kimlike abbeel 3.0 10 --ids=1 --delta=1.0 [ 0.29000256  0.30931118  0.29347245  0.41793941  0.41793941  0.29881627  0.30956525  0.30359564  0.28205454  0.16704923]
