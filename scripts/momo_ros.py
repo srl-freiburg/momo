@@ -185,18 +185,6 @@ class MomoROS(object):
                 if self.within_grid((i, j)) == True and self.distance_between(robot, (i, j)) < radius:
                     local_cells.append((i, j))
 
-        # i, j = robot[0]-radius, robot[1]-radius
-        # while i < robot[0]+radius:
-        #     while j < robot[1]+radius:
-        #         if self.within_grid((i, j)) is True and self.distance_between(robot, (i, j)) <= radius:
-        #             local_cells.append((int(i), int(j)))
-
-        #         j += self.params.cell_size
-        #     # update row sweep
-        #     i += self.params.cell_size
-        #     # reset column sweep
-        #     j = robot[1]-radius
-
         return local_cells
 
     def plan(self, weights, feature_type, feature_params,
@@ -227,7 +215,7 @@ class MomoROS(object):
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
                 self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 10000.0
-                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 1.0
+                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
 
         # Plan
         current = self.convert.from_world2(robot)
