@@ -8,12 +8,10 @@ BASE_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), ".." ) )
 path     = os.path.abspath( os.path.join( BASE_DIR, "python" ) )
 sys.path.append( path )
 
+import glob
 import time
 import momo
-import momo.planning
 import numpy as np
-import matplotlib.pylab as pl
-import scipy.ndimage as ni
 
 class default_noise( object ):
   def __init__( self, factor ):
@@ -113,13 +111,19 @@ period = 1.0 / float( sys.argv[3] )
 
 if not os.path.exists( os.path.join( root, "filtered" ) ):
   os.makedirs( os.path.join( root, "filtered" ) )
-data = filter_data( read_data( os.path.join( root, "tracks", "%s.txt" ) % sys.argv[2] ), period )
 
-data.sort( key = lambda x : x[0]  )
+file_path = os.path.join( root, "tracks", "%s*.txt" % sys.argv[2] )
+files = glob.glob( file_path )
 
-f = open( os.path.join( root, "filtered", "%s.txt" ) % sys.argv[2], "w" )
-for d in data:
-  f.write( "%i %f %i %f %f %f %f\n" % ( d[0], d[1], d[2], d[3][0], d[3][1], d[3][2], d[3][3] ) )
-f.close()
+for f in files:
+  print "Processing", f
+  data = filter_data( read_data( f ), period )
+
+  data.sort( key = lambda x : x[0]  )
+
+  f = open( os.path.join( root, "filtered", os.path.basename( f ) ), "w" )
+  for d in data:
+    f.write( "%i %f %i %f %f %f %f\n" % ( d[0], d[1], d[2], d[3][0], d[3][1], d[3][2], d[3][3] ) )
+  f.close()
 
 

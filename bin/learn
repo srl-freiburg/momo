@@ -8,6 +8,7 @@ BASE_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), ".." ) )
 path     = os.path.abspath( os.path.join( BASE_DIR, "python" ) )
 sys.path.append( path )
 
+import glob
 import momo
 import random
 import numpy as np
@@ -57,7 +58,13 @@ if len( algorithm_args ) > 0:
 output_name += ".txt"
 
 # Perform learning
-data      = momo.read_data( os.path.join( root, "filtered", "%s.txt" % dataset ) )
+file_path = os.path.join( root, "filtered", "%s*.txt" % dataset )
+files = glob.glob( file_path )
+
+data = []
+
+for f in files:
+  data.append( momo.read_data( os.path.join( f ) ) )
 features  = momo.features.__dict__[feature_name]
 algorithm = momo.learning.__dict__[algorithm_name]
 
