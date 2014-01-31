@@ -76,10 +76,14 @@ class dijkstra( momo.opencl.Program ):
     tk = None
     ty = None
     tx = None
+    count = 0
     while p1 != -1:
+      count += 1
       k = p1 / ( height * width )
       y = ( p1 % ( height * width ) ) / width
       x = p1 % width
+      if count > height * width:
+        return None
       if k == tk and y == ty and x == tx:
         return None
       tk = k

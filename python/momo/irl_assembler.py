@@ -73,12 +73,8 @@ class irl_assembler( object ):
   @staticmethod
   def load( stream ):
     features, learning, radius, h, theta = cPickle.load( stream )
-    print "Loaded", theta
     features = momo.features.__dict__[features.split( "." )[-1]]
-    print "Features", features
     learning = momo.learning.__dict__[learning.split( "." )[-1]]
-    print "Learning", learning
     result = irl_assembler( features, learning, radius, h, theta )
-    print "Radius, h,", radius, h
     return result
 
