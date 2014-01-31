@@ -13,7 +13,8 @@ class dijkstra( object ):
     costs = self.compute_costs( features, theta )
     cummulated, parents = self.planner( costs, goal )
     path = self.planner.get_path( parents, current )
-
+    if path == None:
+      return path, cummulated, costs
     result = []
     for p in path:
       result.append( self.convert.to_world2( p, speed ) )

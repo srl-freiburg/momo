@@ -55,14 +55,18 @@ def learn( feature_module, convert, frame_data, ids, radius, h ):
       for o_id in ids:
         l = len( fd[o_id]["states"] )
         for i in xrange( max( l - h, 1 ) ):
-          sys.stderr.write( "." )
           observed, expected, cummulated, costs = compute_expectations( 
             feature_module, convert, radius, 
             fd[o_id]["states"][i:], fd[o_id]["frames"][i:], 
             w, h
           )
-          sum_obs += observed
-          sum_exp += expected
+          if observed != None:
+            sys.stderr.write( "." )
+            sum_obs += observed
+            sum_exp += expected
+          else:
+            sys.stderr.write( "x" )
+
         sys.stderr.write( "\n" )
 
     gradient = sum_obs - sum_exp
@@ -111,6 +115,8 @@ def compute_expectations( feature_module, convert, radius, states, frames, w, h 
   w = sum( w ) - w
 
   path, cummulated, costs  = planner( states[0], states[-1], features, w, avg_velocity )
+  if path == None:
+    return None, None, None, None
   mu_expected = np.sum( 
     [
       feature_module.compute_feature( 
