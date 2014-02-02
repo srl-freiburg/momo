@@ -32,8 +32,6 @@ def learn( feature_module, convert, frame_data, ids, radius, h ):
   # Initialize weight vector
   w  = np.ones( feature_length ).astype( np.float64 )
   for i in xrange( feature_length ):
-    #w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( count + feature_length ) )
-    #w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( np.sum( sum_obs ) + feature_length ) )
     w[i] = exp( - ( sum_obs[i] + 1.0 ) / ( count + 2.0 ) )
   w /= np.linalg.norm( w )
 

@@ -33,13 +33,13 @@ root = options.root
 
 # Prepare file paths
 start_path = os.path.join( root, "models" )
-datasets = glob.glob( os.path.join( start_path, "*" ) )
+datasets = sorted( glob.glob( os.path.join( start_path, "*" ) ) )
 
 for ds in datasets:
   print "=" * 80
   print os.path.basename( ds )
   print
-  files = glob.glob( os.path.join( ds, "*.txt" ) )
+  files = sorted( glob.glob( os.path.join( ds, "*.txt" ) ) )
   for f in files:
     features, algorithm, parameters = os.path.basename( f ).split( "-" )
     parameters = parameters.split( ".txt" )[0]

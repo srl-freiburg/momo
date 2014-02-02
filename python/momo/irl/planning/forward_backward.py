@@ -10,9 +10,9 @@ class forward_backward( object ):
     start = self.convert.from_world2( start )
     goal = self.convert.from_world2( goal )
 
-    momo.tick( "FB Costs" )
+    #momo.tick( "FB Costs" )
     costs = self.compute_costs( features, theta )
-    momo.tack( "FB Costs" )
+    #momo.tack( "FB Costs" )
     #momo.tick( "FB Forward" )
     forward, backward = self.planner( costs, start, goal )
     #momo.tack( "FB Forward" )

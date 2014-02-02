@@ -8,13 +8,9 @@ class compute_cummulated( momo.opencl.Program ):
     momo.opencl.Program.__init__( self )
     self.henryCummulated = self.loadProgram( momo.BASE_DIR + "/opencl/henryCummulated.cl" )
 
-    mf = cl.mem_flags
-
-    self.idirection_buffer = cl.Buffer( self.context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = momo.planning.DIRECTIONS )
-
-
   def __call__( self, forward, backward, costs, features, origin, h ):
     mf = cl.mem_flags
+    costs = costs.astype( np.float64 )
 
     w_features = features.astype( np.float64 )
     cummulated = costs * 1
@@ -30,7 +26,6 @@ class compute_cummulated( momo.opencl.Program ):
       self.queue, costs.shape, None, 
       np.int32( w_features.shape[2] ), np.int32( w_features.shape[1] ),
       origin_buffer, np.int32( h ),
-      self.idirection_buffer,
       forward_buffer, backward_buffer, cost_buffer, cumm_buffer
     )
 

@@ -9,16 +9,17 @@ def compute_expectations(
   avg_velocity = np.sum( velocities, 0 ) / len( velocities )
   features = compute_features( avg_velocity, frames[0] )
 
-  momo.tick( "Forward-backward" )
+  #momo.tick( "Forward-backward" )
   forward, backward, costs = planner( states[0], states[-1], features, w, avg_velocity )
-  momo.tack( "Forward-backward" )
+  #momo.tack( "Forward-backward" )
 
-  momo.tick( "Accum" )
+  #momo.tick( "Accum" )
   cummulated, w_features  = accum( 
     forward, backward, costs, features, 
     convert.from_world2( states[0] ), h 
   )
-  momo.tack( "Accum" )
+  #print np.sum( forward )
+  #momo.tack( "Accum" )
 
   mu_expected = np.sum( w_features, axis = 0 )
   mu_expected = np.sum( mu_expected, axis = 0 )
