@@ -57,8 +57,8 @@ class forward_backward( momo.opencl.Program ):
     wait = []
 
     for i in xrange( sum( costs.shape ) ):
-      momo.tick( "first + second" )
-      momo.tick( "first" )
+      #momo.tick( "first + second" )
+      #momo.tick( "first" )
       e1 = self.flow.forwardPass( 
         self.queue, costs.shape, None, 
         np.int32( width ), np.int32( height ),
@@ -70,8 +70,8 @@ class forward_backward( momo.opencl.Program ):
         wait_for = wait
       )
       wait = [e1]
-      momo.tack( "first" )
-      momo.tick( "second" )
+      #momo.tack( "first" )
+      #momo.tick( "second" )
       e2 = self.flow.updatePass( 
         self.queue, costs.shape, None, 
         np.int32( width ), np.int32( height ),
@@ -80,15 +80,15 @@ class forward_backward( momo.opencl.Program ):
         wait_for = wait
       )
       wait = [e2]
-      momo.tack( "second" )
-      momo.tack( "first + second" )
-    momo.tick( "wait" )
+      #momo.tack( "second" )
+      #momo.tack( "first + second" )
+    #momo.tick( "wait" )
     e2.wait()
-    momo.tack( "wait" )
-    momo.tick( "copy" )
+    #momo.tack( "wait" )
+    #momo.tick( "copy" )
     cl.enqueue_copy( self.queue, forward, f1_buffer )
     cl.enqueue_copy( self.queue, backward, b1_buffer )
-    momo.tack( "copy" )
+    #momo.tack( "copy" )
     return forward, backward
 
 
