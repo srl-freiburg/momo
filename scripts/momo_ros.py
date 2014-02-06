@@ -108,7 +108,7 @@ class MomoROS(object):
 
     def publish_costmap(self, costs, cell_size):
         cc = costs[0] * 1.0
-        cc *= 100.0 / np.max( cc )
+        cc *= 1000.0 / np.max( cc )
         cc = cc.astype( np.int8 )
         w, h = cc.shape
         c = np.reshape( cc, w * h )
@@ -215,7 +215,7 @@ class MomoROS(object):
             for obs in self.OBSTACLES:
                 # costs[:, obs[1], obs[0]] = 50
                 self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000.0
-                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 1.0
+                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 20.0
 
         # Plan
         current = self.convert.from_world2(robot)
