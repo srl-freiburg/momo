@@ -29,11 +29,17 @@ class Params(object):
     pass
 
 
+# def param(name, default=None):
+#     if default != None:
+#         return rospy.get_param("/" + rospy.get_name() + "/" + name, default)
+#     else:
+#         return rospy.get_param("/" + rospy.get_name() + "/" + name)
+
 def param(name, default=None):
     if default != None:
-        return rospy.get_param("/" + rospy.get_name() + "/" + name, default)
+        return rospy.get_param("/pedsim" + "/" + name, default)
     else:
-        return rospy.get_param("/" + rospy.get_name() + "/" + name)
+        return rospy.get_param("/pedsim" + "/" + name)
 
 
 def get_params():
@@ -87,7 +93,7 @@ class MomoROS(object):
         self.pub_agent_state = rospy.Publisher('robot_state', AgentState)
 
         # subscribers
-        rospy.Subscriber("AllAgentsStatus", AllAgentsState, self.callback_agent_status)
+        rospy.Subscriber("dynamic_obstacles", AllAgentsState, self.callback_agent_status)
         rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles, queue_size=1)
 
 
