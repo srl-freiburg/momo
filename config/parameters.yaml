@@ -58,3 +58,9 @@ pedsim:
     move_robot: 100.0
     # flag for teleoperation mode
     teleop_state: 0.0
+
+# feature extraction parameters
+feature_extraction:
+    sensor_range: 7.0
+    neighbors: 3
+    sensor_view: 180.0
