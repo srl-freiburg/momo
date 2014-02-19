@@ -1,22 +1,22 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find simulator)scenarios/scene3.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/scene3.xml" type="string"/>
   <rosparam command="load" file="$(find momo)/config/teleop_params.yaml" />
 
   <!-- main simulator node -->
-  <node name="simulator" pkg="simulator" type="simulator" output="screen"/>
+  <node name="simulator" pkg="simulator" type="pedsim_simulator" output="screen"/>
 
   <!-- tf broadcaster for aligning frames -->
-  <node name="simulator_tf_broadcaster" pkg="simulator" type="dummy_transforms.py" respawn="false" output="screen" />
+  <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="screen" />
 
   <!-- teleop node -->
-  <node name="teleop" pkg="simulator" type="teleop" respawn="false" output="screen" />
+  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="screen" />
 
   <!-- metrics node -->
   <!-- <node name="metrics_logger" pkg="simulator" type="metrics_logger.py" respawn="false" output="screen" /> -->
 
   <!-- agent trace logging node -->
-  <!-- <node name="data_logger" pkg="simulator" type="data_logger.py" respawn="false" output="screen" /> -->
+  <!-- <node name="data_logger" pkg="pedsim_simulator" type="data_logger.py" respawn="false" output="screen" /> -->
 
   <!-- planning node -->
   <!-- <node name="irl_features" pkg="momo" type="momo_ros.py" /> -->
