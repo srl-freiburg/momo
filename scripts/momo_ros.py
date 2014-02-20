@@ -131,7 +131,7 @@ class MomoROS(object):
     def publish_goal_status(self):
         if self.GOAL_REACHED is True:
             self.pub_goal_status.publish('Arrived')
-            os.system('rosnode kill --all && killall rosmaster')
+            os.system('rosnode kill --all')
             # os.system('killall rosmaster')
         else:
             self.pub_goal_status.publish('Travelling')
@@ -164,13 +164,6 @@ class MomoROS(object):
     def cost_at_cell(self, costs, cell):
         """ Cost in each direction at a particular cell """
         return costs[:, cell[0], cell[1]]
-
-
-    def evaluate_feature(self, feature, eval_fun):
-        """ Evaluate a raw feature based on some function
-            and can be used for feature selection
-        """
-        pass
 
     def within_grid(self, cell):
         if (cell[0] >= self.params.x1 and cell[0] <= self.params.x2) and \
@@ -210,9 +203,7 @@ class MomoROS(object):
             # print lc
             if len(lc) > 0:
                 for cell in lc:
-                    # self.costs[:, cell[1], cell[0]] = 1000
                     self.costs[:, cell[1], cell[0]] = temp_costs[:, cell[1], cell[0]]
-                    # self.costs[:, cell[0], cell[1]] = temp_costs[:, cell[0], cell[1]]
 
         # for visualization (different thresholds for obstacles)
         viscosts = self.costs.copy()
@@ -220,9 +211,8 @@ class MomoROS(object):
         # bring in obstacles
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
-                # costs[:, obs[1], obs[0]] = 50
                 self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000.0
-                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 20.0
+                viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 40.0
 
         # Plan
         current = self.convert.from_world2(robot)
