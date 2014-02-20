@@ -131,7 +131,8 @@ class MomoROS(object):
     def publish_goal_status(self):
         if self.GOAL_REACHED is True:
             self.pub_goal_status.publish('Arrived')
-            os.system('rosnode kill -a')
+            os.system('rosnode kill --all && killall rosmaster')
+            # os.system('killall rosmaster')
         else:
             self.pub_goal_status.publish('Travelling')
 
