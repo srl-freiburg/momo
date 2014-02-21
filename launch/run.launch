@@ -15,12 +15,12 @@
 
 
   <!-- teleop node -->
-  <!-- <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" /> -->
+  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
 
   <!-- feature logging -->
-  <!-- <node name="feature_extraction" pkg="feature_extraction" type="feature_extraction" respawn="false" output="screen" /> -->
+  <node name="feature_extraction" pkg="feature_extraction" type="feature_extraction" respawn="false" output="screen" />
 
   <!-- planning node -->
-  <node name="momo" pkg="momo" type="momo_ros.py" respawn="false" output="log"/>
+  <!-- <node name="momo" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
   <!-- <node name="momo" pkg="momo" type="irl_features.py" /> -->
 </launch>
