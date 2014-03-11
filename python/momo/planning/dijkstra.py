@@ -14,7 +14,7 @@ class dijkstra( momo.opencl.Program ):
 
   def __call__( self, costs, goal ):
     if ( costs < 0 ).any():
-      raise runtime_error( "The cost matrix cannot have negative values" )
+      raise RuntimeError( "The cost matrix cannot have negative values" )
     mf = cl.mem_flags
 
     width = costs.shape[2]

@@ -99,12 +99,13 @@ class MomoROS(object):
 
     def publish_path(self, plan):
         p = []
-        for item in plan:
-            pose = PoseStamped()
-            pose.pose.position.x = item[0]
-            pose.pose.position.y = item[1]
-            pose.header.stamp = rospy.Time.now()
-            p.append(pose)
+        if plan is not None:
+            for item in plan:
+                pose = PoseStamped()
+                pose.pose.position.x = item[0]
+                pose.pose.position.y = item[1]
+                pose.header.stamp = rospy.Time.now()
+                p.append(pose)
 
         path = Path()
         path.header.stamp = rospy.Time.now()
@@ -222,25 +223,27 @@ class MomoROS(object):
         path = self.planner.get_path(parents, current)
 
         world_path = []
-        for p in path:
-            world_path.append(self.convert.to_world2(p, speed))
-
         interpolated_path = []
-        i = 0
-        current = robot * 1.0
 
-        while True:
-            current_cell = self.convert.from_world2(current)
-            next_cell = self.convert.from_world2(world_path[i])
-            if (current_cell[:2] == next_cell[:2]).all():
-                i += 1
+        if path is not None:
+            for p in path:
+                world_path.append(self.convert.to_world2(p, speed))
 
-            if i > self.LOOKAHEAD + 1 or i >= len(world_path):
-                break
-            current[2:] = world_path[i][:2] - current[:2]
-            current[2:] = speed * current[2:] / np.linalg.norm(current[2:])
-            current[:2] += current[2:]
-            interpolated_path.append(current * 1.0)
+            i = 0
+            current = robot * 1.0
+
+            while True:
+                current_cell = self.convert.from_world2(current)
+                next_cell = self.convert.from_world2(world_path[i])
+                if (current_cell[:2] == next_cell[:2]).all():
+                    i += 1
+
+                if i > self.LOOKAHEAD + 1 or i >= len(world_path):
+                    break
+                current[2:] = world_path[i][:2] - current[:2]
+                current[2:] = speed * current[2:] / np.linalg.norm(current[2:])
+                current[:2] += current[2:]
+                interpolated_path.append(current * 1.0)
 
         self.publish_path(world_path)
         self.publish_costmap(viscosts, cell_size)
@@ -263,7 +266,6 @@ class MomoROS(object):
                 [a.position.x, a.position.y,
                  a.velocity.x, a.velocity.y],
                 dtype=np.float64)
-            # TODO - change to agent type
             if a.type == self.params.target_type:
                 robot = v
             else:
