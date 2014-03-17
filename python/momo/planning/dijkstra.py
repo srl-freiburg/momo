@@ -1,7 +1,6 @@
 import pyopencl as cl
 import numpy as np
-from math import *
-from __common__ import *
+from __common__ import DIRECTIONS
 import momo
 
 class dijkstra( momo.opencl.Program ):

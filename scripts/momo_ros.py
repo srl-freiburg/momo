@@ -5,35 +5,28 @@ __version__ = '0.1'
 __license__ = 'BSD'
 
 
-import rospy
+import sys
+import os
+import math
+import ast
 import numpy as np
+
+import rospy
+
 from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
 from nav_msgs.msg import Path, GridCells, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
-import ast
 
-import sys
-import os
-import math
+import momo
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 path = os.path.abspath(os.path.join(BASE_DIR, "python"))
 sys.path.append(path)
 
-import momo
-
-
 class Params(object):
     pass
-
-
-# def param(name, default=None):
-#     if default != None:
-#         return rospy.get_param("/" + rospy.get_name() + "/" + name, default)
-#     else:
-#         return rospy.get_param("/" + rospy.get_name() + "/" + name)
 
 def param(name, default=None):
     if default != None:
@@ -65,12 +58,15 @@ def get_params():
 
 
 class MomoROS(object):
+    """ 
+    ROS interface for momo 
+    
+    """
 
+    # TODO - remove this class variable and use instance variables
     LOOKAHEAD = 1
     OBSTACLES = None
     GOAL_REACHED = False
-
-    """ ROS interface for momo """
 
     def __init__(self):
         self.params = get_params()
@@ -133,7 +129,6 @@ class MomoROS(object):
         if self.GOAL_REACHED is True:
             self.pub_goal_status.publish('Arrived')
             os.system('rosnode kill --all')
-            # os.system('killall rosmaster')
         else:
             self.pub_goal_status.publish('Travelling')
 
@@ -297,20 +292,18 @@ class MomoROS(object):
         self.OBSTACLES = []
         for cell in data.cells:
             # TODO - get cell size in here
-            self.OBSTACLES.append([int(cell.x), int(cell.y)])
-            # self.OBSTACLES.append([int(cell.x - 0.5), int(cell.y - 0.5)])
-        
+            self.OBSTACLES.append([int(cell.x), int(cell.y)])        
 
 
 def run(args):
-    rospy.init_node('irl_features')
+    rospy.init_node('momo')
     MomoROS()
 
     # start up
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print "Shutting down ROS Image feature detector module"
+        print "Shutting down momo node"
 
 
 if __name__ == '__main__':
