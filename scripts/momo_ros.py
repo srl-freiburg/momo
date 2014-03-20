@@ -25,11 +25,13 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 path = os.path.abspath(os.path.join(BASE_DIR, "python"))
 sys.path.append(path)
 
+
 class Params(object):
     pass
 
+
 def param(name, default=None):
-    if default != None:
+    if default is not None:
         return rospy.get_param("/pedsim" + "/" + name, default)
     else:
         return rospy.get_param("/pedsim" + "/" + name)
@@ -58,9 +60,10 @@ def get_params():
 
 
 class MomoROS(object):
-    """ 
-    ROS interface for momo 
-    
+
+    """
+    ROS interface for momo
+
     """
 
     # TODO - remove this class variable and use instance variables
@@ -89,9 +92,10 @@ class MomoROS(object):
         self.pub_agent_state = rospy.Publisher('robot_state', AgentState)
 
         # subscribers
-        rospy.Subscriber("dynamic_obstacles", AllAgentsState, self.callback_agent_status)
-        rospy.Subscriber("static_obstacles", GridCells, self.callback_obstacles, queue_size=1)
-
+        rospy.Subscriber("dynamic_obstacles", AllAgentsState,
+                         self.callback_agent_status)
+        rospy.Subscriber("static_obstacles", GridCells,
+                         self.callback_obstacles, queue_size=1)
 
     def publish_path(self, plan):
         p = []
@@ -111,10 +115,10 @@ class MomoROS(object):
 
     def publish_costmap(self, costs, cell_size):
         cc = costs[0] * 1.0
-        cc *= 1000.0 / np.max( cc )
-        cc = cc.astype( np.int8 )
+        cc *= 1000.0 / np.max(cc)
+        cc = cc.astype(np.int8)
         w, h = cc.shape
-        c = np.reshape( cc, w * h )
+        c = np.reshape(cc, w * h)
 
         ocg = OccupancyGrid()
         ocg.header.stamp = rospy.Time.now()
@@ -123,7 +127,7 @@ class MomoROS(object):
         ocg.info.resolution = cell_size
         ocg.info.width = h
         ocg.info.height = w
-        self.pub_cost.publish( ocg )
+        self.pub_cost.publish(ocg)
 
     def publish_goal_status(self):
         if self.GOAL_REACHED is True:
@@ -140,7 +144,6 @@ class MomoROS(object):
         a.velocity.x = vx
         a.velocity.y = vy
         self.pub_agent_state.publish(a)
-
 
     def _build_compute_objects(self, feature_type, feature_params,
                                x1, x2, y1, y2, cell_size):
@@ -163,22 +166,21 @@ class MomoROS(object):
 
     def within_grid(self, cell):
         if (cell[0] >= self.params.x1 and cell[0] <= self.params.x2) and \
-            (cell[1] >= self.params.y1 and cell[1] <= self.params.y2):
+                (cell[1] >= self.params.y1 and cell[1] <= self.params.y2):
             return True
         else:
             return False
 
     def distance_between(self, cella, cellb):
-        return math.sqrt((cella[0]-cellb[0])**2 + (cella[1]-cellb[1])**2)
-
+        return math.sqrt((cella[0] - cellb[0]) ** 2 + (cella[1] - cellb[1]) ** 2)
 
     def get_cells_in_range(self, robot, radius):
         """ Get only the cells in the local range of the robot """
         local_cells = []
-        
-        for i in xrange(int(robot[0])-int(radius), int(robot[0])+int(radius)):
-            for j in xrange(int(robot[1])-int(radius), int(robot[1])+int(radius)):
-                if self.within_grid((i, j)) == True and self.distance_between(robot, (i, j)) < radius:
+
+        for i in xrange(int(robot[0]) - int(radius), int(robot[0]) + int(radius)):
+            for j in xrange(int(robot[1]) - int(radius), int(robot[1]) + int(radius)):
+                if self.within_grid((i, j)) is True and self.distance_between(robot, (i, j)) < radius:
                     local_cells.append((i, j))
 
         return local_cells
@@ -199,7 +201,8 @@ class MomoROS(object):
             # print lc
             if len(lc) > 0:
                 for cell in lc:
-                    self.costs[:, cell[1], cell[0]] = temp_costs[:, cell[1], cell[0]]
+                    self.costs[:, cell[1], cell[0]
+                               ] = temp_costs[:, cell[1], cell[0]]
 
         # for visualization (different thresholds for obstacles)
         viscosts = self.costs.copy()
@@ -282,17 +285,19 @@ class MomoROS(object):
             distance = np.linalg.norm(robot[:2] - self.params.goal[:2])
 
         if distance > self.params.goal_threshold:
-            self.publish_robot_state(self.params.target_type, robot[0], robot[1],
+            self.publish_robot_state(
+                self.params.target_type, robot[0], robot[1],
                 path[self.LOOKAHEAD][2], path[self.LOOKAHEAD][3])
         else:
             self.GOAL_REACHED = True
-            self.publish_robot_state(self.params.target_type, robot[0], robot[1], 0, 0)
+            self.publish_robot_state(
+                self.params.target_type, robot[0], robot[1], 0, 0)
 
     def callback_obstacles(self, data):
         self.OBSTACLES = []
         for cell in data.cells:
             # TODO - get cell size in here
-            self.OBSTACLES.append([int(cell.x), int(cell.y)])        
+            self.OBSTACLES.append([int(cell.x), int(cell.y)])
 
 
 def run(args):
