@@ -9,21 +9,23 @@ import sys
 import os
 import math
 import ast
+
 import numpy as np
 
 import rospy
-
 from pedsim_msgs.msg import AgentState
 from pedsim_msgs.msg import AllAgentsState
 from nav_msgs.msg import Path, GridCells, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
 
-import momo
 
+# must be set before calling import momo
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 path = os.path.abspath(os.path.join(BASE_DIR, "python"))
 sys.path.append(path)
+
+import momo
 
 
 class Params(object):
@@ -37,6 +39,7 @@ def param(name, default=None):
         return rospy.get_param("/pedsim" + "/" + name)
 
 
+# TODO - clean this up into a dict of parameters
 def get_params():
     result = Params()
     result.target_type = param("target_type")
@@ -66,13 +69,13 @@ class MomoROS(object):
 
     """
 
-    # TODO - remove this class variable and use instance variables
-    LOOKAHEAD = 1
-    OBSTACLES = None
-    GOAL_REACHED = False
-
     def __init__(self):
+        self.LOOKAHEAD = 1
+        self.OBSTACLES = None
+        self.GOAL_REACHED = False
+
         self.params = get_params()
+
         self._build_compute_objects(
             self.params.feature_type,
             self.params.feature_params,
@@ -98,7 +101,7 @@ class MomoROS(object):
                          self.callback_obstacles, queue_size=1)
 
     def publish_path(self, plan):
-        p = []
+        p = list()
         if plan is not None:
             for item in plan:
                 pose = PoseStamped()
@@ -114,6 +117,11 @@ class MomoROS(object):
         self.pub_plan.publish(path)
 
     def publish_costmap(self, costs, cell_size):
+        """ publish_costmap( costs, cell_size )
+
+        Publish the costmap derived from the learned weights
+
+        """
         cc = costs[0] * 1.0
         cc *= 1000.0 / np.max(cc)
         cc = cc.astype(np.int8)
@@ -157,14 +165,21 @@ class MomoROS(object):
         self.planner = momo.planning.dijkstra()
 
     def feature_at_cell(self, features, cell):
-        """ Raw binary feature in each direction at a particular cell """
+        """
+        Raw binary feature in each direction at a particular cell
+        """
         return features[:, cell[0], cell[1], :]
 
     def cost_at_cell(self, costs, cell):
-        """ Cost in each direction at a particular cell """
+        """
+        Cost in each direction at a particular cell
+        """
         return costs[:, cell[0], cell[1]]
 
     def within_grid(self, cell):
+        """
+        Check if a cell is within the grid
+        """
         if (cell[0] >= self.params.x1 and cell[0] <= self.params.x2) and \
                 (cell[1] >= self.params.y1 and cell[1] <= self.params.y2):
             return True
@@ -175,8 +190,12 @@ class MomoROS(object):
         return math.sqrt((cella[0] - cellb[0]) ** 2 + (cella[1] - cellb[1]) ** 2)
 
     def get_cells_in_range(self, robot, radius):
-        """ Get only the cells in the local range of the robot """
-        local_cells = []
+        """
+        Get only the cells in the local radius of the robot
+
+        TODO - add direction
+        """
+        local_cells = list()
 
         for i in xrange(int(robot[0]) - int(radius), int(robot[0]) + int(radius)):
             for j in xrange(int(robot[1]) - int(radius), int(robot[1]) + int(radius)):
@@ -301,7 +320,7 @@ class MomoROS(object):
 
 
 def run(args):
-    rospy.init_node('momo')
+    rospy.init_node('momo_node')
     MomoROS()
 
     # start up
