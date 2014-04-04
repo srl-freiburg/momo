@@ -122,7 +122,8 @@ class MomoROS(object):
         Publish the costmap derived from the learned weights
 
         """
-        cc = costs[0] * 1.0
+        cc = (costs[0] + costs[1] + costs[2] + costs[3] + costs[4] + costs[5] + costs[6] + costs[7]) * (1.0/8.0)
+
         cc *= 1000.0 / np.max(cc)
         cc = cc.astype(np.int8)
         w, h = cc.shape
@@ -229,7 +230,7 @@ class MomoROS(object):
         # bring in obstacles
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
-                self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000.0
+                self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 1000000.0
                 viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 40.0
 
         # Plan
