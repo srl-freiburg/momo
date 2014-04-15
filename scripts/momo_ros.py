@@ -274,7 +274,7 @@ class MomoROS(object):
         # self.params = get_params()
         travel_time = rospy.get_rostime().to_sec() - data.header.stamp.to_sec()
         if travel_time > self.params.max_msg_age:
-            rospy.loginfo('Skipping data which (%f)s late' % (travel_time))
+            #rospy.logwarn('Skipping data which (%f)s late' % (travel_time))
             return
 
         other = []
