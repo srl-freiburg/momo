@@ -1,0 +1,26 @@
+# main simulation parameters
+pedsim:
+    feature_type: "kimlike"
+    feature_params: "{'radius': 7}"
+    weights: "[0.6, 0.1, 0.01, 0.7, 0.1, 0.01, 0.8, 0.1, 0.05, 1.0, 1.0]"
+
+    # feature_type: "icra14"
+    # feature_params: "{'radius': 5}"
+    # weights: "[0.1, 0.05, 0.01, 0.5, 0.3, 0.2, 0.7, 0.2, 0.1, 0.3, 0.2, 0.1, 1.0]"
+
+    # # scene 1
+    goal: "[22.0, 27.0, -1.0, -1.0]"
+    x1: 0.0
+    y1: 0.0
+    x2: 32.0
+    y2: 32.0
+
+    # additional parameters
+    max_msg_age: 0.3
+    goal_threshold: 2.0
+
+# feature extraction parameters
+feature_extraction:
+    sensor_range: 7.0
+    neighbors: 3
+    sensor_view: 180.0
