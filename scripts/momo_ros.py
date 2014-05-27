@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
-__author__ = 'Billy Okal <okal@cs.uni-freiburg.de>'
-__version__ = '0.1'
-__license__ = 'BSD'
+from __future__ import division, print_function
+
+__author__ = "Billy Okal"
+__copyright__ = "Social Robotics Lab, University of Freiburg"
+__license__ = "BSD"
+__version__ = "0.0.2"
+__email__ = "okal@cs.uni-freiburg.de"
 
 
 import sys
@@ -329,7 +333,7 @@ def run(args):
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print "Shutting down momo node"
+        print("Shutting down momo node")
 
 
 if __name__ == '__main__':
