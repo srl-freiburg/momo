@@ -6,13 +6,13 @@
   <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/scene2.xml" type="string"/>
   <param name="/pedsim/update_type" value="oracle" type="string"/>
   <param name="/pedsim/sensor_range" value="30.0" type="double"/>
-  
+
   <!-- grid related parameters -->
   <param name="/pedsim/goal" value="[115.0, 15.0, 1.0, 0.0]"/>
   <param name="/pedsim/x1" value="0.0" type="double"/>
   <param name="/pedsim/y1" value="0.0" type="double"/>
-  <param name="/pedsim/x2" value="130.0" type="double"/>
-  <param name="/pedsim/y2" value="40.0" type="double"/>
+  <param name="/pedsim/x2" value="122.0" type="double"/>
+  <param name="/pedsim/y2" value="32.0" type="double"/>
 
   <!-- other parameters -->
   <param name="/pedsim/cell_size" value="1.0" type="double"/>
@@ -22,8 +22,11 @@
   <param name="/pedsim/max_msg_age" value="0.3" type="double"/>
 
   <!-- robot control parameters -->
-  <param name="/pedsim/move_robot" value="400" type="double"/>
+  <param name="/pedsim/move_robot" value="10" type="double"/>
   <param name="/pedsim/teleop_state" value="0.0" type="double"/>
+
+  <rosparam command="load" file="$(find momo)/config/parameters.yaml" />
+
 
 
   <!-- NODES -->
