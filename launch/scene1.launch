@@ -36,7 +36,7 @@
   <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="log" />
 
   <!-- feature logging -->
-  <node name="feature_extraction" pkg="feature_extraction" type="feature_extraction" respawn="false" output="screen" />
+  <!-- <node name="feature_extraction" pkg="feature_extraction" type="feature_extraction" respawn="false" output="screen" /> -->
 
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/scene1.rviz"/>
 
