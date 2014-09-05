@@ -74,7 +74,7 @@ class MomoROS(object):
     """
 
     def __init__(self):
-        self.LOOKAHEAD = 1
+        self.LOOKAHEAD = 10
         self.OBSTACLES = None
         self.GOAL_REACHED = False
 
@@ -126,8 +126,8 @@ class MomoROS(object):
         Publish the costmap derived from the learned weights
 
         """
-        # cc = costs[0] * 1.0
-        cc = (costs[0] + costs[1] + costs[2] + costs[3] + costs[4] + costs[5] + costs[6] + costs[7]) * (1.0/8.0)
+        cc = costs[0] * 1.0
+        # cc = (costs[0] + costs[1] + costs[2] + costs[3] + costs[4] + costs[5] + costs[6] + costs[7]) * (1.0/8.0)
 
         cc *= 1000.0 / np.max(cc)
         cc = cc.astype(np.int8)
@@ -226,8 +226,7 @@ class MomoROS(object):
             # print lc
             if len(lc) > 0:
                 for cell in lc:
-                    self.costs[:, cell[1], cell[0]
-                               ] = temp_costs[:, cell[1], cell[0]]
+                    self.costs[:, cell[1], cell[0]] = temp_costs[:, cell[1], cell[0]]
 
         # for visualization (different thresholds for obstacles)
         viscosts = self.costs.copy()
@@ -235,8 +234,17 @@ class MomoROS(object):
         # bring in obstacles
         if self.OBSTACLES is not None:
             for obs in self.OBSTACLES:
-                self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 100000.0
+                self.costs[:, obs[1] / cell_size, obs[0] / cell_size] = 10000000.0
+                self.costs[:, (obs[1]+1) / cell_size, (obs[0]+1) / cell_size] = 5000000.0
+                self.costs[:, (obs[1]-1) / cell_size, (obs[0]-1) / cell_size] = 5000000.0
+                self.costs[:, (obs[1]+2) / cell_size, (obs[0]+2) / cell_size] = 1000000.0
+                self.costs[:, (obs[1]-2) / cell_size, (obs[0]-2) / cell_size] = 1000000.0
+
                 viscosts[:, obs[1] / cell_size, obs[0] / cell_size] = 10.0
+                # viscosts[:, (obs[1]+1) / cell_size, (obs[0]+1) / cell_size] = 8.0
+                # viscosts[:, (obs[1]-1) / cell_size, (obs[0]-1) / cell_size] = 8.0
+                # viscosts[:, (obs[1]+2) / cell_size, (obs[0]+2) / cell_size] = 5.0
+                # viscosts[:, (obs[1]-2) / cell_size, (obs[0]-2) / cell_size] = 5.0
 
         # Plan
         current = self.convert.from_world2(robot)
