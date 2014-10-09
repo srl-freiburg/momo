@@ -12,7 +12,7 @@
   <param name="/pedsim/x1" value="0.0" type="double"/>
   <param name="/pedsim/y1" value="0.0" type="double"/>
   <param name="/pedsim/x2" value="152.0" type="double"/>
-  <param name="/pedsim/y2" value="60.0" type="double"/>
+  <param name="/pedsim/y2" value="52.0" type="double"/>
 
   <!-- other parameters -->
   <param name="/pedsim/cell_size" value="1.0" type="double"/>
